@@ -23,7 +23,7 @@
         "lastKmsgDesc": "last_kmsg chứa nhật ký dmesg + bootloader về lần cuối thiết bị của bạn được khởi động lại (cố ý hoặc do một sự cố). Nó hữu ích cho việc chẩn đoán lỗi kernel và các sự cố khác.",
         "dmesgDesc": "dmesg hiển thị bộ đệm vòng kernel hiện tại (nhật ký). Điều này hữu ích cho việc chẩn đoán các sự cố xảy ra sau khi khởi động.",
         "tooltipUnsupported": "Phiên bản kernel này quá cũ và có thể không hoàn toàn tương thích với mô-đun này. Vui lòng cập nhật kernel của bạn.",
-        "rebootSystem": "Reboot System",
+        "rebootSystem": "Khởi động lại Hệ thống",
         "rebootRecovery": "Khởi động lại vào Recovery",
         "rebootFastboot": "Khởi động lại vào Fastboot",
         "rebootDownload": "Khởi động lại vào Download",
@@ -46,7 +46,8 @@
         "tooltipReadOnlyAllowed": "Thay đổi trạng thái của tính năng này tạm thời được cho phép, nhưng nó sẽ không được lưu.",
         "tooltipReadOnlyBlocked": "Trạng thái của tính năng này không thể thay đổi thông qua giao diện người dùng (chỉ đọc).",
         "tooltipExperimental": "Thử nghiệm",
-        "currentLabel": "Hiện tại:"
+        "currentLabel": "Hiện tại:",
+        "noSupportYet": "Tính năng hỗ trợ chưa khả dụng cho thiết bị này."
     },
     "monitor": {
         "title": "Giám sát",
@@ -225,6 +226,10 @@
             "enabled": "Đã bật",
             "disabled": "Đã tắt"
         },
+        "miscGenericTitle": "Tinh chỉnh linh tinh",
+        "exynos": {
+            "title": "Tinh chỉnh Exynos"
+        },
         "miscTrinket": {
             "title": "Tinh chỉnh FloppyTrinket Linh tinh",
             "touchboost": "Touchboost Hiệu năng MSM",
@@ -291,8 +296,9 @@
             "blockEd3": "Tắt Chế độ Phát hiện Tai 3, chế độ này ngăn màn hình giảm tốc độ làm mới khi cảm biến tiệm cận ảo được kích hoạt. Đồng thời làm cảm biến tiệm cận giảm độ nhạy.",
             "gpuClkLock": "Khi được bật, ngăn tần số tối thiểu/tối đa của GPU thay đổi. Hữu ích để khóa xung GPU trong một phạm vi cụ thể.",
             "gpuUnlock": "Bật ép xung GPU ngay lập tức. Chỉ hoạt động ở chế độ ép xung Superfloppy (1, 2, 3). Bị mờ nếu Chế độ Mở khóa bị tắt hoặc ở các chế độ không phải ép xung.",
+            "gpuUnlock2100": "Bật mở khóa GPU ngay lập tức. Trên Floppy2100, cái này có thể được bật/tắt bất cứ lúc nào với hiệu lực tức thì.",
             "soundcontrol": "Điều chỉnh khuếch đại của tai nghe và míc ở decibel. Giá trị càng cao thì càng tăng âm lượng. Sử dụng Chia kênh L/R để điều khiển kênh trái và kênh phải một cách độc lập.",
-            "charging": "Configure advanced charging behavior.",
+            "charging": "Cấu hình hành vi sạc nâng cao.",
             "chargingBypass": "Ngăn pin sạc trong khi cho phép thiết bị chạy từ nguồn điện USB. Hữu ích khi chơi game để giảm nhiệt độ.",
             "chargingFast": "Buộc lên đến dòng sạc 900mA qua các kết nối USB tiêu chuẩn (ví dụ: cổng PC).",
             "adreno": "Tinh chỉnh dành riêng cho GPU Adreno.",
@@ -327,7 +333,7 @@
         "settingsSaved": "Cài đặt đã được lưu",
         "settingsApplied": "Cài đặt đã được áp dụng",
         "settingsFailed": "Thất bại khi áp dụng cài đặt",
-        "logSaved": "Nhật ví được lưu vào {path}",
+        "logSaved": "Nhật ký được lưu vào {path}",
         "logFailed": "Thất bại khi lưu nhật ký",
         "copied": "Đã sao chép vào bảng nhớ tạm",
         "presetLoadFailed": "Thất bại khi tải thiết lập sẵn",
