@@ -362,6 +362,10 @@ body.theme-detect-anim .nav-item .icon {
     /* Orange/Yellow */
 }
 
+.status-icon.experimental {
+    color: #ff6b5e;
+}
+
 .status-bubble {
     position: absolute;
     bottom: 125%;
@@ -1923,12 +1927,6 @@ body {
     position: absolute;
     display: inline-flex;
     align-items: center;
-}
-
-/* Feature cards need larger inset for rounded corners */
-.feature-card>.experimental-badge {
-    top: 16px;
-    inset-inline-end: 16px;
 }
 
 /* Option items use smaller inset */

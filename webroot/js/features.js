@@ -341,6 +341,21 @@ function renderFeatures(schema, procCmdline) {
             `;
         }
 
+        // 3. Experimental Warning
+        if (item.experimental) {
+            const bubbleId = `bubble-experimental-${item.key}`;
+            statusIconsHtml += `
+                <div class="status-icon-wrapper" style="position:relative;">
+                    <svg class="status-icon experimental" onclick="toggleBubble('${bubbleId}', event)" viewBox="${warningIcon.viewBox}">
+                        <path fill="currentColor" d="${warningIcon.d}"/>
+                    </svg>
+                    <div id="${bubbleId}" class="status-bubble hidden">
+                        ${t('features.tooltipExperimental')}
+                    </div>
+                </div>
+            `;
+        }
+
         // --- Switch Construction ---
         let headerControl = '';
         // Allow switch for all types, but treat explicit readOnly flag same as type 'info'
@@ -412,12 +427,8 @@ function renderFeatures(schema, procCmdline) {
         }
         const currentValueHtml = `<div class="current-value-display">${t('features.currentLabel')} ${displayValText}</div>`;
 
-        // Feature-level experimental badge
-        const featureExpBadge = item.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental')}"><svg viewBox="${warningIcon.viewBox}" width="18" height="18"><path fill="#F44336" d="${warningIcon.d}"/></svg></span>` : '';
-
         // Render
         el.innerHTML = `
-            ${featureExpBadge}
             <div class="feature-header">
                 <div class="feature-info">
                     <h3 class="feature-title">${tf(item.key, 'title', null, currentFamily) || item.title}</h3>
