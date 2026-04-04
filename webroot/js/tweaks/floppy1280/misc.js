@@ -1,18 +1,19 @@
 // Shared Exynos tweaks state
 
-let miscCurrentState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
-let miscSavedState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
-let miscPendingState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
-let miscReferenceState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
-let miscCapabilities = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
+let miscCurrentState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscSavedState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscPendingState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscReferenceState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscCapabilities = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let exynosFeatureState = { init_protection: '1' };
 let exynosStateInitialized = false;
 let exynosUiBound = false;
 let exynosVariantListenerBound = false;
 
 const runMiscBackend = (...args) => window.runTweakBackend('misc', ...args);
-const EXYNOS_STATE_KEYS = ['block_ed3', 'gpu_clklck', 'gpu_unlock'];
+const EXYNOS_STATE_KEYS = ['block_ed3', 'gpu_clklck', 'gpu_unlock', 'throttlers_protection'];
 const MISC_KEYS = ['block_ed3'];
-const EXYNOS_KEYS = ['gpu_clklck', 'gpu_unlock'];
+const EXYNOS_KEYS = ['gpu_clklck', 'throttlers_protection', 'gpu_unlock'];
 
 function getEnabledDisabledText(val) {
     if (val === '1') {
@@ -34,6 +35,9 @@ function getSupportedExynosKeys() {
     if (miscCapabilities.gpu_clklck === '1' && window.KERNEL_NAME !== 'Floppy2100') {
         keys.push('gpu_clklck');
     }
+    if (miscCapabilities.throttlers_protection === '1') {
+        keys.push('throttlers_protection');
+    }
     if (miscCapabilities.gpu_unlock === '1') {
         keys.push('gpu_unlock');
     }
@@ -43,6 +47,7 @@ function getSupportedExynosKeys() {
 function isMiscKeySupported(key) {
     if (key === 'block_ed3') return miscCapabilities.block_ed3 === '1';
     if (key === 'gpu_clklck') return getSupportedExynosKeys().includes('gpu_clklck');
+    if (key === 'throttlers_protection') return getSupportedExynosKeys().includes('throttlers_protection');
     if (key === 'gpu_unlock') return getSupportedExynosKeys().includes('gpu_unlock');
     return false;
 }
@@ -62,6 +67,7 @@ function updateRowVisibility() {
     const rowDefs = [
         { id: 'misc-row-blocked3', visible: isMiscKeySupported('block_ed3') },
         { id: 'misc-row-gpuclklck', visible: isMiscKeySupported('gpu_clklck') },
+        { id: 'misc-row-throttlersprotection', visible: isMiscKeySupported('throttlers_protection') },
         { id: 'misc-row-gpuunlock', visible: isMiscKeySupported('gpu_unlock') }
     ];
 
@@ -75,7 +81,11 @@ function updateRowVisibility() {
     ['misc', 'exynos'].forEach((cardId) => {
         const rows = cardId === 'misc'
             ? [document.getElementById('misc-row-blocked3')]
-            : [document.getElementById('misc-row-gpuclklck'), document.getElementById('misc-row-gpuunlock')];
+            : [
+                document.getElementById('misc-row-gpuclklck'),
+                document.getElementById('misc-row-throttlersprotection'),
+                document.getElementById('misc-row-gpuunlock')
+            ];
         const visibleRows = rows.filter((row) => row && !row.classList.contains('hidden'));
         if (visibleRows.length > 0) {
             visibleRows[visibleRows.length - 1].style.borderBottom = 'none';
@@ -109,18 +119,22 @@ function updateGpuUnlockCopy() {
 function renderSharedValues() {
     const valBlocked3 = document.getElementById('misc-val-blocked3');
     const valGpuClkLck = document.getElementById('misc-val-gpuclklck');
+    const valThrottlersProtection = document.getElementById('misc-val-throttlersprotection');
     const valGpuUnlock = document.getElementById('misc-val-gpuunlock');
 
     if (valBlocked3) valBlocked3.textContent = getEnabledDisabledText(miscCurrentState.block_ed3);
     if (valGpuClkLck) valGpuClkLck.textContent = getEnabledDisabledText(miscCurrentState.gpu_clklck);
+    if (valThrottlersProtection) valThrottlersProtection.textContent = getEnabledDisabledText(miscCurrentState.throttlers_protection);
     if (valGpuUnlock) valGpuUnlock.textContent = getEnabledDisabledText(miscCurrentState.gpu_unlock);
 
     const blockEd3Switch = document.getElementById('misc-blocked3-switch');
     const gpuClkLckSwitch = document.getElementById('misc-gpuclklck-switch');
+    const throttlersProtectionSwitch = document.getElementById('misc-throttlersprotection-switch');
     const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
 
     if (blockEd3Switch) blockEd3Switch.checked = miscPendingState.block_ed3 === '1';
     if (gpuClkLckSwitch) gpuClkLckSwitch.checked = miscPendingState.gpu_clklck === '1';
+    if (throttlersProtectionSwitch) throttlersProtectionSwitch.checked = miscPendingState.throttlers_protection === '1';
     if (gpuUnlockSwitch) gpuUnlockSwitch.checked = miscPendingState.gpu_unlock === '1';
 }
 
@@ -161,6 +175,24 @@ function updateGpuUnlockAvailability() {
     if (switchContainer) switchContainer.style.opacity = isOcMode ? '1' : '0.5';
 }
 
+function updateThrottlersProtectionAvailability() {
+    const throttlersProtectionSwitch = document.getElementById('misc-throttlersprotection-switch');
+    if (!throttlersProtectionSwitch) return;
+
+    const switchContainer = throttlersProtectionSwitch.closest('.tweak-switch-container');
+    if (!isMiscKeySupported('throttlers_protection')) {
+        throttlersProtectionSwitch.disabled = true;
+        if (switchContainer) switchContainer.style.opacity = '0.5';
+        return;
+    }
+
+    const isBlockedByInitProtection = window.KERNEL_NAME === 'Floppy2100'
+        && String(exynosFeatureState.init_protection || '1') !== '1';
+
+    throttlersProtectionSwitch.disabled = isBlockedByInitProtection;
+    if (switchContainer) switchContainer.style.opacity = isBlockedByInitProtection ? '0.5' : '1';
+}
+
 function renderExynosCards() {
     updateCardTitles();
     updateGpuUnlockCopy();
@@ -169,7 +201,23 @@ function renderExynosCards() {
     setCardVisibility('exynos', getCardSupportedKeys('exynos').length > 0);
     renderSharedValues();
     updatePendingIndicators();
+    updateThrottlersProtectionAvailability();
     updateGpuUnlockAvailability();
+}
+
+async function loadExynosFeatureState() {
+    if (window.KERNEL_NAME !== 'Floppy2100') {
+        exynosFeatureState = { init_protection: '1' };
+        return;
+    }
+
+    try {
+        const output = await exec('/data/adb/modules/floppy_companion/tools/fkfeat/fkfeatctl get init_protection 2>/dev/null');
+        const match = String(output || '').match(/init_protection=(\d+)/);
+        exynosFeatureState = { init_protection: match ? match[1] : '1' };
+    } catch (e) {
+        exynosFeatureState = { init_protection: '1' };
+    }
 }
 
 async function loadSharedExynosState() {
@@ -178,14 +226,18 @@ async function loadSharedExynosState() {
     miscCapabilities = {
         block_ed3: capabilities.block_ed3 || '0',
         gpu_clklck: capabilities.gpu_clklck || '0',
-        gpu_unlock: capabilities.gpu_unlock || '0'
+        gpu_unlock: capabilities.gpu_unlock || '0',
+        throttlers_protection: capabilities.throttlers_protection || '0'
     };
+
+    await loadExynosFeatureState();
 
     const { current, saved } = await window.loadTweakState('misc');
     miscCurrentState = {
         block_ed3: current.block_ed3 || '0',
         gpu_clklck: current.gpu_clklck || '0',
-        gpu_unlock: current.gpu_unlock || '0'
+        gpu_unlock: current.gpu_unlock || '0',
+        throttlers_protection: current.throttlers_protection || '0'
     };
 
     miscSavedState = { ...saved };
@@ -200,7 +252,8 @@ async function loadSharedExynosState() {
     miscReferenceState = {
         block_ed3: effectiveReferenceState.block_ed3 || '0',
         gpu_clklck: effectiveReferenceState.gpu_clklck || '0',
-        gpu_unlock: effectiveReferenceState.gpu_unlock || '0'
+        gpu_unlock: effectiveReferenceState.gpu_unlock || '0',
+        throttlers_protection: effectiveReferenceState.throttlers_protection || '0'
     };
 
     exynosStateInitialized = true;
@@ -219,9 +272,10 @@ window.loadExynosState = loadExynosState;
 
 async function saveStateSubset(keys) {
     for (const key of keys) {
-        if (key === 'gpu_unlock') {
-            const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
-            if (gpuUnlockSwitch && gpuUnlockSwitch.disabled) continue;
+        if (key === 'gpu_unlock' || key === 'throttlers_protection') {
+            const switchId = key === 'gpu_unlock' ? 'misc-gpuunlock-switch' : 'misc-throttlersprotection-switch';
+            const toggleSwitch = document.getElementById(switchId);
+            if (toggleSwitch && toggleSwitch.disabled) continue;
         }
         await runMiscBackend('save', key, miscPendingState[key]);
         miscSavedState[key] = miscPendingState[key];
@@ -234,9 +288,10 @@ async function saveStateSubset(keys) {
 
 async function applyStateSubset(keys) {
     for (const key of keys) {
-        if (key === 'gpu_unlock') {
-            const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
-            if (gpuUnlockSwitch && gpuUnlockSwitch.disabled) continue;
+        if (key === 'gpu_unlock' || key === 'throttlers_protection') {
+            const switchId = key === 'gpu_unlock' ? 'misc-gpuunlock-switch' : 'misc-throttlersprotection-switch';
+            const toggleSwitch = document.getElementById(switchId);
+            if (toggleSwitch && toggleSwitch.disabled) continue;
         }
         await runMiscBackend('apply', key, miscPendingState[key]);
     }
@@ -251,7 +306,8 @@ async function applyStateSubset(keys) {
     miscCurrentState = {
         block_ed3: current.block_ed3 || '0',
         gpu_clklck: current.gpu_clklck || '0',
-        gpu_unlock: current.gpu_unlock || '0'
+        gpu_unlock: current.gpu_unlock || '0',
+        throttlers_protection: current.throttlers_protection || '0'
     };
 
     renderExynosCards();
@@ -298,6 +354,7 @@ function bindExynosUiIfNeeded() {
 
     const blockEd3Switch = document.getElementById('misc-blocked3-switch');
     const gpuClkLckSwitch = document.getElementById('misc-gpuclklck-switch');
+    const throttlersProtectionSwitch = document.getElementById('misc-throttlersprotection-switch');
     const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
 
     if (blockEd3Switch) {
@@ -310,6 +367,13 @@ function bindExynosUiIfNeeded() {
     if (gpuClkLckSwitch) {
         gpuClkLckSwitch.addEventListener('change', (e) => {
             miscPendingState.gpu_clklck = e.target.checked ? '1' : '0';
+            updatePendingIndicators();
+        });
+    }
+
+    if (throttlersProtectionSwitch) {
+        throttlersProtectionSwitch.addEventListener('change', (e) => {
+            miscPendingState.throttlers_protection = e.target.checked ? '1' : '0';
             updatePendingIndicators();
         });
     }
@@ -361,11 +425,11 @@ function registerExynosTweaks() {
         apply: applyMisc
     });
 
-    window.registerTweak('exynos', {
-        getState: () => {
-            const state = {};
-            EXYNOS_KEYS.forEach((key) => {
-                state[key] = miscPendingState[key];
+        window.registerTweak('exynos', {
+            getState: () => {
+                const state = {};
+                EXYNOS_KEYS.forEach((key) => {
+                    state[key] = miscPendingState[key];
             });
             return state;
         },
@@ -392,7 +456,7 @@ function initSharedExynosTweakUI() {
         return;
     }
 
-    renderExynosCards();
+    loadExynosFeatureState().then(renderExynosCards);
 }
 
 function initMiscTweak() {

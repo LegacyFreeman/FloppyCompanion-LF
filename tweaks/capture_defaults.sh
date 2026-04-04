@@ -203,6 +203,7 @@ $(      first=1
       }
       append_exynos_entry "gpu_clklck" "/sys/kernel/gpu/gpu_clklck"
       append_exynos_entry "gpu_unlock" "/sys/kernel/gpu/gpu_unlock"
+      append_exynos_entry "throttlers_protection" "/sys/kernel/throttlers_protection"
 )
     }
 EOF_EXYNOS
