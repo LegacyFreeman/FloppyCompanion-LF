@@ -53,7 +53,7 @@
         "title": "Giám sát",
         "memory": {
             "title": "Bộ nhớ",
-            "usedMemory": "Bộ nhớ đã Sử dụng",
+            "usedMemory": "Bộ nhớ Đã sử dụng",
             "usedSwap": "Swap (ZRAM / swapfile)",
             "totalSection": "Tổng Bộ nhớ",
             "totalLabel": "Tổng",
@@ -181,7 +181,7 @@
             "criticalUpgrade": "Nâng cấp Quan trọng",
             "upgradePressure": "Nâng cấp Áp suất",
             "downgradePressure": "Hạ cấp Áp suất",
-            "killHeaviestTask": "Diệt Nhiệm vụ Nặng nhất",
+            "killHeaviestTask": "Diệt Tác vụ Nặng nhất",
             "killTimeout": "Thời gian chờ Diệt",
             "psiPartialStall": "Ngừng Một phần PSI",
             "psiCompleteStall": "Ngừng Hoàn toàn PSI",
@@ -227,6 +227,7 @@
             "title": "Tinh chỉnh Floppy1280 Linh tinh",
             "blockEd3": "Chế độ Phát hiện Chặn Tai 3",
             "gpuClkLock": "Khoá Xung GPU",
+            "throttlersProtection": "Bảo vệ Điều tiết",
             "gpuUnlock": "Ép xung GPU",
             "enabled": "Đã bật",
             "disabled": "Đã tắt"
@@ -300,6 +301,7 @@
             "undervolt": "Giảm điện áp để tiết kiệm điện năng và giảm nhiệt. Không khuyến nghị sử dụng với Ép xung (Chế độ Mở khóa).",
             "blockEd3": "Tắt Chế độ Phát hiện Tai 3, chế độ này ngăn màn hình giảm tốc độ làm mới khi cảm biến tiệm cận ảo được kích hoạt. Đồng thời làm cảm biến tiệm cận giảm độ nhạy.",
             "gpuClkLock": "Khi được bật, ngăn tần số tối thiểu/tối đa của GPU thay đổi. Hữu ích để khóa xung GPU trong một phạm vi cụ thể.",
+            "throttlersProtection": "Khi được bật, không gian người dùng (các dịch vụ và tiến trình của ROM) sẽ bị chặn điều tiết CPU và GPU, do đó chỉ có việc điều tiết ở cấp độ kernel mới xảy ra.",
             "gpuUnlock": "Bật ép xung GPU ngay lập tức. Chỉ hoạt động ở chế độ ép xung Superfloppy (1, 2, 3). Bị mờ nếu Chế độ Mở khóa bị tắt hoặc ở các chế độ không phải ép xung.",
             "gpuUnlock2100": "Bật mở khóa GPU ngay lập tức. Trên Floppy2100, cái này có thể được bật/tắt bất cứ lúc nào với hiệu lực tức thì.",
             "soundcontrol": "Điều chỉnh khuếch đại của tai nghe và míc ở decibel. Giá trị càng cao thì càng tăng âm lượng. Sử dụng Chia kênh L/R để điều khiển kênh trái và kênh phải một cách độc lập.",

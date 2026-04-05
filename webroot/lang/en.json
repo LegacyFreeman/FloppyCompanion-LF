@@ -326,7 +326,7 @@
         "telegram": "Telegram channel",
         "variantStandard": "Standard",
         "build": {
-            "release": "Release Build",
+            "release": "Release",
             "testing": "Testing",
             "dirty": "Dirty"
         },
