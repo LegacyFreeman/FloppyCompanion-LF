@@ -181,6 +181,7 @@ window.reloadTweakState = async function (tweakId) {
         lmkd: window.loadLmkdState,
         iosched: window.loadIoSchedulerState,
         thermal: window.loadThermalState,
+        thermal_control: window.loadThermalControlState,
         undervolt: window.loadUndervoltState,
         misc: window.loadMiscState,
         exynos: window.loadExynosState,
@@ -216,6 +217,7 @@ window.clearTweakPersistence = async function (tweakId) {
         lmkd: 'lmkd.conf',
         iosched: 'iosched.conf',
         thermal: 'thermal.conf',
+        thermal_control: 'thermal_control.conf',
         undervolt: 'undervolt.conf',
         soundcontrol: 'soundcontrol.conf',
         charging: 'charging.conf',
@@ -751,6 +753,7 @@ function initPlatformTweaks() {
 
         // Initialize all platform tweaks - each will show/hide its own card
         if (typeof initThermalTweak === 'function') initThermalTweak();
+        if (typeof initThermalControlTweak === 'function') initThermalControlTweak();
         if (typeof initUndervoltTweak === 'function') initUndervoltTweak();
         if (typeof initMiscTweak === 'function') initMiscTweak();
         if (typeof initExynosTweak === 'function') initExynosTweak();

@@ -211,6 +211,14 @@
             "desc2": "Custom throttle frequency. Set your own throttle limit in KHz.",
             "desc3": "Less aggressive throttling. Frequencies: 2400 → 2288 → 2208 MHz. Runs hotter."
         },
+        "thermalControl": {
+            "title": "Thermal Control",
+            "little": "Little",
+            "big": "Big",
+            "prime": "Prime",
+            "g3d": "G3D",
+            "performanceMode": "Performance mode"
+        },
         "undervolt": {
   "title": "Undervolt",
   "little": "Little Cluster",
@@ -298,6 +306,8 @@
             "display": "HBM boosts max brightness under sunlight. CABC adjusts backlight based on content to save power.",
             "ioScheduler": "Algorithm used to order and merge I/O requests. Affects storage performance and latency.",
             "thermal": "Controls Big cluster CPU throttling. Mode 3 is aggressive performance, Mode 1 is stock-like, Mode 0 disables throttling (dangerous!).",
+            "thermalControl": "Adjust CPU and G3D thermal trip offsets relative to the captured kernel defaults. Higher values relax throttling, lower values make it more aggressive. These offsets are captured and applied after boot settles.",
+            "thermalControlPerformance": "Sets all thermal offset values to 0°C, meaning the ECT's default throttling values are used.",
             "undervolt": "Reduces voltage to save power and reduce heat. Not recommended with Overclocking (Unlocked Mode).",
             "blockEd3": "Disables Ear Detect Mode 3, which prevents the display from lowering its refresh rate when the virtual proximity sensor is engaged. Also makes the proximity sensor less sensitive.",
             "gpuClkLock": "When enabled, prevents the GPU min/max frequencies from being changed. Useful for locking GPU clocks to a specific range.",
@@ -372,6 +382,8 @@
         "readonlyBody": "<p>This allows patching features marked as read-only.</p><p><strong>Use only for testing. Changes will NOT be saved.</strong></p>",
         "applyChangesTitle": "Apply changes?",
         "applyChangesBody": "<p>This will flash the feature-patched kernel to your device.</p><p><strong>This involves risks.</strong></p>",
+        "thermalControlPerformanceTitle": "Enable Performance mode?",
+        "thermalControlPerformanceBody": "<p>This sets all thermal offsets to <strong>0°C</strong>, using the ECT's default throttling values.</p><p><strong>This can cause significant overheating.</strong></p>",
         "rebootPendingBody": "<p>Are you sure you want to {action}?</p><p><strong>You have unapplied changes that will be lost!</strong></p>",
         "processingKernel": "Processing Kernel..."
     }

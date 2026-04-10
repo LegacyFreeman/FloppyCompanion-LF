@@ -148,6 +148,11 @@ if [ -f "$MODDIR/tweaks/misc.sh" ]; then
     sh "$MODDIR/tweaks/misc.sh" apply_saved
 fi
 
+# Thermal Control (Floppy2100 only, delayed until offsets settle)
+if [ -f "$MODDIR/tweaks/thermal_control.sh" ]; then
+    sh "$MODDIR/tweaks/thermal_control.sh" sync_boot_state &
+fi
+
 # Sound Control (FloppyTrinketMi only)
 if [ -f "$MODDIR/tweaks/soundcontrol.sh" ]; then
     sh "$MODDIR/tweaks/soundcontrol.sh" apply_saved

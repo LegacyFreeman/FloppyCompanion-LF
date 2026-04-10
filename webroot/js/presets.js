@@ -85,6 +85,7 @@ async function reloadAllTweakStates() {
         'lmkd',
         'iosched',
         'thermal',
+        'thermal_control',
         'undervolt',
         'misc',
         'soundcontrol',

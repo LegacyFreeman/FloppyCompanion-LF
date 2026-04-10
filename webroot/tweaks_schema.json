@@ -28,6 +28,20 @@
           }
         },
         {
+          "id": "thermal_control",
+          "cardId": "thermal-control-card",
+          "pendingId": "thermal-control-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-thermal-control",
+          "iconKey": "thermal",
+          "titleKey": "tweaks.thermalControl.title",
+          "tooltipKey": "tweaks.tooltip.thermalControl",
+          "requires": {
+            "var": "kernelName",
+            "eq": "Floppy2100"
+          }
+        },
+        {
           "id": "undervolt",
           "cardId": "undervolt-card",
           "pendingId": "undervolt-pending-indicator",

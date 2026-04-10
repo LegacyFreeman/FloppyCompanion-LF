@@ -174,6 +174,12 @@
                     mode: '1',
                     custom_freq: '2288000'
                 },
+                thermal_control: {
+                    big_offset: '-10000',
+                    mid_offset: '-10000',
+                    little_offset: '-8000',
+                    g3d_offset: '-13000'
+                },
                 undervolt: {
                     little: '0',
                     big: '0',
@@ -216,6 +222,7 @@
                 lmkd: {},
                 iosched: {},
                 thermal: {},
+                thermal_control: {},
                 undervolt: {},
                 misc: {},
                 soundcontrol: {},
@@ -232,11 +239,18 @@
 
         if (!isExynos) {
             delete state.tweakCurrent.thermal;
+            delete state.tweakCurrent.thermal_control;
             delete state.tweakCurrent.undervolt;
             delete state.tweakCurrent.misc;
             state.tweakSaved.thermal = {};
+            state.tweakSaved.thermal_control = {};
             state.tweakSaved.undervolt = {};
             state.tweakSaved.misc = {};
+        }
+
+        if (config.family !== '2100') {
+            delete state.tweakCurrent.thermal_control;
+            state.tweakSaved.thermal_control = {};
         }
 
         if (!isTrinket) {
@@ -272,6 +286,15 @@
             };
             if (config.family === '1280') {
                 defaultPresetTweaks.thermal = { ...state.tweakCurrent.thermal };
+            }
+            if (config.family === '2100') {
+                defaultPresetTweaks.thermal_control = {
+                    performance_mode: '0',
+                    little: '-8',
+                    big: '-10',
+                    prime: '-10',
+                    g3d: '-13'
+                };
             }
         }
 
@@ -391,6 +414,18 @@
             return;
         }
 
+        if (scriptName === 'thermal_control' && action === 'apply') {
+            const little = parseInt(args[0] || '-8', 10) || 0;
+            const big = parseInt(args[1] || '-10', 10) || 0;
+            const prime = parseInt(args[2] || '-10', 10) || 0;
+            const g3d = parseInt(args[3] || '-13', 10) || 0;
+            current.little_offset = String(little * 1000);
+            current.mid_offset = String(big * 1000);
+            current.big_offset = String(prime * 1000);
+            current.g3d_offset = String(g3d * 1000);
+            return;
+        }
+
         if (scriptName === 'misc' && (action === 'save' || action === 'apply')) {
             const key = args[0];
             const val = args[1] || '0';
@@ -444,6 +479,7 @@
         if (action === 'is_available') {
             const available =
                 (scriptName === 'thermal' && state.config.family === '1280') ||
+                (scriptName === 'thermal_control' && state.config.family === '2100') ||
                 (scriptName === 'undervolt' && (state.config.family === '1280' || state.config.family === '2100')) ||
                 (['soundcontrol', 'charging', 'display', 'adreno', 'misc_trinket'].includes(scriptName) && state.config.family === 'trinket');
             return `available=${available ? '1' : '0'}`;
@@ -483,6 +519,11 @@
             return 'ok';
         }
 
+        if (action === 'clear_saved') {
+            state.tweakSaved[scriptName] = {};
+            return 'cleared';
+        }
+
         if (action === 'save' || action === 'apply') {
             const kv = parseKeyValueArgs(args);
             const hasKeyValueArgs = Object.keys(kv).length > 0;
@@ -515,6 +556,22 @@
 
         if (action === 'apply_saved') {
             const saved = state.tweakSaved[scriptName] || {};
+            if (scriptName === 'thermal_control') {
+                const defaults = (
+                    JSON.parse(state.files['/data/adb/floppy_companion/presets/.defaults.json'] || '{}').tweaks || {}
+                ).thermal_control || { performance_mode: '0', little: '-8', big: '-10', prime: '-10', g3d: '-13' };
+                if ((saved.performance_mode || '0') === '1') {
+                    applyPositionalTweak(scriptName, 'apply', ['0', '0', '0', '0']);
+                    return 'applied';
+                }
+                applyPositionalTweak(scriptName, 'apply', [
+                    saved.little || defaults.little || '-8',
+                    saved.big || defaults.big || '-10',
+                    saved.prime || defaults.prime || '-10',
+                    saved.g3d || defaults.g3d || '-13'
+                ]);
+                return 'applied';
+            }
             state.tweakCurrent[scriptName] = { ...(state.tweakCurrent[scriptName] || {}), ...saved };
             return 'applied';
         }

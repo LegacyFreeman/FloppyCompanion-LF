@@ -1452,6 +1452,16 @@ body {
     color: #f44336;
 }
 
+.thermal-control-fields.is-disabled {
+    opacity: 0.5;
+}
+
+.thermal-control-fields.is-disabled .slider-container,
+.thermal-control-fields.is-disabled .value-row,
+.thermal-control-fields.is-disabled .tweak-info-col {
+    pointer-events: none;
+}
+
 .warning-icon {
     width: 16px;
     height: 16px;

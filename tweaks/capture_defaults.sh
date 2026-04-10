@@ -230,6 +230,11 @@ $(      first=1
       append_exynos_entry "throttlers_protection" "/sys/kernel/throttlers_protection"
 )
     }
+$(      if [ "$IS_2100" = "1" ] && [ -f "$MODDIR/tweaks/thermal_control.sh" ] && [ "$(sh "$MODDIR/tweaks/thermal_control.sh" is_available 2>/dev/null)" = "available=1" ]; then
+        printf ',\n'
+        sh "$MODDIR/tweaks/thermal_control.sh" emit_defaults_fragment
+      fi
+)
 EOF_EXYNOS
     elif [ "$IS_TRINKET" = "1" ]; then
     cat << EOF_TRINKET
