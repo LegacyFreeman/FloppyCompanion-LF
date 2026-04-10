@@ -351,9 +351,10 @@
 
                     <template id="tpl-thermal-control">
                         <div class="card-content">
-                            <div class="tweak-row" style="padding-top: 0; border-bottom: none; padding-bottom: 16px;">
-                                <div class="m3-switch-label">
-                                    <label class="switch-text" for="thermal-control-performance-switch">
+                            <div class="tweak-row tweak-separator" style="padding-top: 0; padding-bottom: 16px;">
+                                <div class="tweak-toggle-row" style="padding: 0; margin-bottom: 0;">
+                                    <label class="switch-text" for="thermal-control-performance-switch"
+                                        style="display: flex; align-items: center; flex: 1 1 auto; min-width: 0;">
                                         <span data-i18n="tweaks.thermalControl.performanceMode">Performance mode</span>
                                         <div class="status-icon-wrapper beer" style="display: inline-flex; vertical-align: middle; margin-inline-start: 6px;">
                                             <button type="button" class="status-icon-button icon-button transparent circle"
@@ -361,8 +362,8 @@
                                                 onclick="toggleBubble('bubble-thermal-control-performance', event)">
                                                 <svg class="status-icon info small" viewBox="0 0 24 24" data-icon="info"></svg>
                                             </button>
-                                <div id="bubble-thermal-control-performance" class="status-bubble center hidden"
-                                     data-i18n="tweaks.tooltip.thermalControlPerformance"></div>
+                                            <div id="bubble-thermal-control-performance" class="status-bubble center hidden"
+                                                data-i18n="tweaks.tooltip.thermalControlPerformance"></div>
                                         </div>
                                     </label>
                                     <div class="beer switch-scope">
@@ -374,7 +375,7 @@
                                 </div>
                             </div>
                             <div id="thermal-control-fields" class="thermal-control-fields">
-                            <div class="slider-container">
+                            <div class="slider-container tweak-separator">
                                 <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
                                     <div class="tweak-info-col">
                                         <span class="tweak-label" data-i18n="tweaks.thermalControl.little">Little</span>
