@@ -1,19 +1,19 @@
 // Shared Exynos tweaks state
 
-let miscCurrentState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
-let miscSavedState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
-let miscPendingState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
-let miscReferenceState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
-let miscCapabilities = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscCurrentState = { block_ed3: '0', esg_short_burst: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscSavedState = { block_ed3: '0', esg_short_burst: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscPendingState = { block_ed3: '0', esg_short_burst: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscReferenceState = { block_ed3: '0', esg_short_burst: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
+let miscCapabilities = { block_ed3: '0', esg_short_burst: '0', gpu_clklck: '0', gpu_unlock: '0', throttlers_protection: '0' };
 let exynosFeatureState = { init_protection: '1' };
 let exynosStateInitialized = false;
 let exynosUiBound = false;
 let exynosVariantListenerBound = false;
 
 const runMiscBackend = (...args) => window.runTweakBackend('misc', ...args);
-const EXYNOS_STATE_KEYS = ['block_ed3', 'gpu_clklck', 'gpu_unlock', 'throttlers_protection'];
+const EXYNOS_STATE_KEYS = ['block_ed3', 'esg_short_burst', 'gpu_clklck', 'gpu_unlock', 'throttlers_protection'];
 const MISC_KEYS = ['block_ed3'];
-const EXYNOS_KEYS = ['gpu_clklck', 'throttlers_protection', 'gpu_unlock'];
+const EXYNOS_KEYS = ['esg_short_burst', 'gpu_clklck', 'throttlers_protection', 'gpu_unlock'];
 
 function getEnabledDisabledText(val) {
     if (val === '1') {
@@ -32,6 +32,9 @@ function translateTextOrFallback(key, fallback) {
 
 function getSupportedExynosKeys() {
     const keys = [];
+    if (miscCapabilities.esg_short_burst === '1' && window.KERNEL_NAME === 'Floppy2100') {
+        keys.push('esg_short_burst');
+    }
     if (miscCapabilities.gpu_clklck === '1' && window.KERNEL_NAME !== 'Floppy2100') {
         keys.push('gpu_clklck');
     }
@@ -46,6 +49,7 @@ function getSupportedExynosKeys() {
 
 function isMiscKeySupported(key) {
     if (key === 'block_ed3') return miscCapabilities.block_ed3 === '1';
+    if (key === 'esg_short_burst') return getSupportedExynosKeys().includes('esg_short_burst');
     if (key === 'gpu_clklck') return getSupportedExynosKeys().includes('gpu_clklck');
     if (key === 'throttlers_protection') return getSupportedExynosKeys().includes('throttlers_protection');
     if (key === 'gpu_unlock') return getSupportedExynosKeys().includes('gpu_unlock');
@@ -66,6 +70,7 @@ function setCardVisibility(cardId, visible) {
 function updateRowVisibility() {
     const rowDefs = [
         { id: 'misc-row-blocked3', visible: isMiscKeySupported('block_ed3') },
+        { id: 'misc-row-esgshortburst', visible: isMiscKeySupported('esg_short_burst') },
         { id: 'misc-row-gpuclklck', visible: isMiscKeySupported('gpu_clklck') },
         { id: 'misc-row-throttlersprotection', visible: isMiscKeySupported('throttlers_protection') },
         { id: 'misc-row-gpuunlock', visible: isMiscKeySupported('gpu_unlock') }
@@ -82,6 +87,7 @@ function updateRowVisibility() {
         const rows = cardId === 'misc'
             ? [document.getElementById('misc-row-blocked3')]
             : [
+                document.getElementById('misc-row-esgshortburst'),
                 document.getElementById('misc-row-gpuclklck'),
                 document.getElementById('misc-row-throttlersprotection'),
                 document.getElementById('misc-row-gpuunlock')
@@ -118,21 +124,25 @@ function updateGpuUnlockCopy() {
 
 function renderSharedValues() {
     const valBlocked3 = document.getElementById('misc-val-blocked3');
+    const valEsgShortBurst = document.getElementById('misc-val-esgshortburst');
     const valGpuClkLck = document.getElementById('misc-val-gpuclklck');
     const valThrottlersProtection = document.getElementById('misc-val-throttlersprotection');
     const valGpuUnlock = document.getElementById('misc-val-gpuunlock');
 
     if (valBlocked3) valBlocked3.textContent = getEnabledDisabledText(miscCurrentState.block_ed3);
+    if (valEsgShortBurst) valEsgShortBurst.textContent = getEnabledDisabledText(miscCurrentState.esg_short_burst);
     if (valGpuClkLck) valGpuClkLck.textContent = getEnabledDisabledText(miscCurrentState.gpu_clklck);
     if (valThrottlersProtection) valThrottlersProtection.textContent = getEnabledDisabledText(miscCurrentState.throttlers_protection);
     if (valGpuUnlock) valGpuUnlock.textContent = getEnabledDisabledText(miscCurrentState.gpu_unlock);
 
     const blockEd3Switch = document.getElementById('misc-blocked3-switch');
+    const esgShortBurstSwitch = document.getElementById('misc-esgshortburst-switch');
     const gpuClkLckSwitch = document.getElementById('misc-gpuclklck-switch');
     const throttlersProtectionSwitch = document.getElementById('misc-throttlersprotection-switch');
     const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
 
     if (blockEd3Switch) blockEd3Switch.checked = miscPendingState.block_ed3 === '1';
+    if (esgShortBurstSwitch) esgShortBurstSwitch.checked = miscPendingState.esg_short_burst === '1';
     if (gpuClkLckSwitch) gpuClkLckSwitch.checked = miscPendingState.gpu_clklck === '1';
     if (throttlersProtectionSwitch) throttlersProtectionSwitch.checked = miscPendingState.throttlers_protection === '1';
     if (gpuUnlockSwitch) gpuUnlockSwitch.checked = miscPendingState.gpu_unlock === '1';
@@ -225,6 +235,7 @@ async function loadSharedExynosState() {
     const capabilities = parseKeyValue(capabilitiesOutput);
     miscCapabilities = {
         block_ed3: capabilities.block_ed3 || '0',
+        esg_short_burst: capabilities.esg_short_burst || '0',
         gpu_clklck: capabilities.gpu_clklck || '0',
         gpu_unlock: capabilities.gpu_unlock || '0',
         throttlers_protection: capabilities.throttlers_protection || '0'
@@ -235,6 +246,7 @@ async function loadSharedExynosState() {
     const { current, saved } = await window.loadTweakState('misc');
     miscCurrentState = {
         block_ed3: current.block_ed3 || '0',
+        esg_short_burst: current.esg_short_burst || '0',
         gpu_clklck: current.gpu_clklck || '0',
         gpu_unlock: current.gpu_unlock || '0',
         throttlers_protection: current.throttlers_protection || '0'
@@ -251,6 +263,7 @@ async function loadSharedExynosState() {
     miscPendingState = { ...effectiveReferenceState };
     miscReferenceState = {
         block_ed3: effectiveReferenceState.block_ed3 || '0',
+        esg_short_burst: effectiveReferenceState.esg_short_burst || '0',
         gpu_clklck: effectiveReferenceState.gpu_clklck || '0',
         gpu_unlock: effectiveReferenceState.gpu_unlock || '0',
         throttlers_protection: effectiveReferenceState.throttlers_protection || '0'
@@ -305,6 +318,7 @@ async function applyStateSubset(keys) {
     const current = parseKeyValue(currentOutput);
     miscCurrentState = {
         block_ed3: current.block_ed3 || '0',
+        esg_short_burst: current.esg_short_burst || '0',
         gpu_clklck: current.gpu_clklck || '0',
         gpu_unlock: current.gpu_unlock || '0',
         throttlers_protection: current.throttlers_protection || '0'
@@ -353,6 +367,7 @@ function bindExynosUiIfNeeded() {
     exynosUiBound = true;
 
     const blockEd3Switch = document.getElementById('misc-blocked3-switch');
+    const esgShortBurstSwitch = document.getElementById('misc-esgshortburst-switch');
     const gpuClkLckSwitch = document.getElementById('misc-gpuclklck-switch');
     const throttlersProtectionSwitch = document.getElementById('misc-throttlersprotection-switch');
     const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
@@ -360,6 +375,13 @@ function bindExynosUiIfNeeded() {
     if (blockEd3Switch) {
         blockEd3Switch.addEventListener('change', (e) => {
             miscPendingState.block_ed3 = e.target.checked ? '1' : '0';
+            updatePendingIndicators();
+        });
+    }
+
+    if (esgShortBurstSwitch) {
+        esgShortBurstSwitch.addEventListener('change', (e) => {
+            miscPendingState.esg_short_burst = e.target.checked ? '1' : '0';
             updatePendingIndicators();
         });
     }

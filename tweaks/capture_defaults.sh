@@ -228,6 +228,7 @@ $(      first=1
       append_exynos_entry "gpu_clklck" "/sys/kernel/gpu/gpu_clklck"
       append_exynos_entry "gpu_unlock" "/sys/kernel/gpu/gpu_unlock"
       append_exynos_entry "throttlers_protection" "/sys/kernel/throttlers_protection"
+      append_exynos_entry "esg_short_burst" "/sys/kernel/ems/energy_step/short_burst"
 )
     }
 $(      if [ "$IS_2100" = "1" ] && [ -f "$MODDIR/tweaks/thermal_control.sh" ] && [ "$(sh "$MODDIR/tweaks/thermal_control.sh" is_available 2>/dev/null)" = "available=1" ]; then

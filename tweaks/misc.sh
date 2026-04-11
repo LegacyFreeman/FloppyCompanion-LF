@@ -1,6 +1,6 @@
 #!/system/bin/sh
 # Misc Exynos Tweaks Backend Script
-# Handles: Block ED3, GPU Clock Lock, GPU Overclock, Throttling Protection
+# Handles: Block ED3, ESG Bursty Mode, GPU Clock Lock, GPU Overclock, Throttling Protection
 
 DATA_DIR="/data/adb/floppy_companion"
 CONFIG_FILE="$DATA_DIR/config/misc.conf"
@@ -10,11 +10,12 @@ BLOCK_ED3_NODE="/sys/devices/virtual/sec/tsp/block_ed3"
 GPU_CLKLCK_NODE="/sys/kernel/gpu/gpu_clklck"
 GPU_UNLOCK_NODE="/sys/kernel/gpu/gpu_unlock"
 THROTTLERS_PROTECTION_NODE="/sys/kernel/throttlers_protection"
+ESG_SHORT_BURST_NODE="/sys/kernel/ems/energy_step/short_burst"
 
 # Check if misc tweaks are available
 is_available() {
     # Available if at least one node exists
-    if [ -f "$BLOCK_ED3_NODE" ] || [ -f "$GPU_CLKLCK_NODE" ] || [ -f "$GPU_UNLOCK_NODE" ] || [ -f "$THROTTLERS_PROTECTION_NODE" ]; then
+    if [ -f "$BLOCK_ED3_NODE" ] || [ -f "$ESG_SHORT_BURST_NODE" ] || [ -f "$GPU_CLKLCK_NODE" ] || [ -f "$GPU_UNLOCK_NODE" ] || [ -f "$THROTTLERS_PROTECTION_NODE" ]; then
         echo "available=1"
     else
         echo "available=0"
@@ -23,6 +24,7 @@ is_available() {
 
 get_capabilities() {
     [ -f "$BLOCK_ED3_NODE" ] && echo "block_ed3=1" || echo "block_ed3=0"
+    [ -f "$ESG_SHORT_BURST_NODE" ] && echo "esg_short_burst=1" || echo "esg_short_burst=0"
     [ -f "$GPU_CLKLCK_NODE" ] && echo "gpu_clklck=1" || echo "gpu_clklck=0"
     [ -f "$GPU_UNLOCK_NODE" ] && echo "gpu_unlock=1" || echo "gpu_unlock=0"
     [ -f "$THROTTLERS_PROTECTION_NODE" ] && echo "throttlers_protection=1" || echo "throttlers_protection=0"
@@ -31,12 +33,17 @@ get_capabilities() {
 # Get current state from kernel
 get_current() {
     local block_ed3=""
+    local esg_short_burst=""
     local gpu_clklck=""
     local gpu_unlock=""
     local throttlers_protection=""
     
     if [ -f "$BLOCK_ED3_NODE" ]; then
         block_ed3=$(cat "$BLOCK_ED3_NODE" 2>/dev/null || echo "")
+    fi
+
+    if [ -f "$ESG_SHORT_BURST_NODE" ]; then
+        esg_short_burst=$(cat "$ESG_SHORT_BURST_NODE" 2>/dev/null || echo "")
     fi
     
     if [ -f "$GPU_CLKLCK_NODE" ]; then
@@ -52,6 +59,7 @@ get_current() {
     fi
     
     echo "block_ed3=$block_ed3"
+    echo "esg_short_burst=$esg_short_burst"
     echo "gpu_clklck=$gpu_clklck"
     echo "gpu_unlock=$gpu_unlock"
     echo "throttlers_protection=$throttlers_protection"
@@ -63,6 +71,7 @@ get_saved() {
         cat "$CONFIG_FILE"
     else
         echo "block_ed3="
+        echo "esg_short_burst="
         echo "gpu_clklck="
         echo "gpu_unlock="
         echo "throttlers_protection="
@@ -100,6 +109,14 @@ apply() {
         block_ed3)
             if [ -f "$BLOCK_ED3_NODE" ]; then
                 echo "$value" > "$BLOCK_ED3_NODE" 2>/dev/null
+                echo "applied"
+            else
+                echo "error: Node not available"
+            fi
+            ;;
+        esg_short_burst)
+            if [ -f "$ESG_SHORT_BURST_NODE" ]; then
+                echo "$value" > "$ESG_SHORT_BURST_NODE" 2>/dev/null
                 echo "applied"
             else
                 echo "error: Node not available"
@@ -153,12 +170,17 @@ apply_saved() {
     fi
     
     local block_ed3=$(grep '^block_ed3=' "$CONFIG_FILE" | cut -d= -f2)
+    local esg_short_burst=$(grep '^esg_short_burst=' "$CONFIG_FILE" | cut -d= -f2)
     local gpu_clklck=$(grep '^gpu_clklck=' "$CONFIG_FILE" | cut -d= -f2)
     local gpu_unlock=$(grep '^gpu_unlock=' "$CONFIG_FILE" | cut -d= -f2)
     local throttlers_protection=$(grep '^throttlers_protection=' "$CONFIG_FILE" | cut -d= -f2)
     
     if [ -n "$block_ed3" ] && [ -f "$BLOCK_ED3_NODE" ]; then
         echo "$block_ed3" > "$BLOCK_ED3_NODE" 2>/dev/null
+    fi
+
+    if [ -n "$esg_short_burst" ] && [ -f "$ESG_SHORT_BURST_NODE" ]; then
+        echo "$esg_short_burst" > "$ESG_SHORT_BURST_NODE" 2>/dev/null
     fi
     
     if [ -n "$gpu_clklck" ] && [ -f "$GPU_CLKLCK_NODE" ]; then

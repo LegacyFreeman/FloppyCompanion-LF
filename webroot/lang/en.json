@@ -234,6 +234,7 @@
         "misc": {
             "title": "Misc Floppy1280 Tweaks",
             "blockEd3": "Block Ear Detect Mode 3",
+            "esgShortBurst": "ESG Bursty Mode",
             "gpuClkLock": "GPU Clock Lock",
             "throttlersProtection": "Throttling Protection",
             "gpuUnlock": "GPU Overclock",
@@ -308,6 +309,7 @@
             "thermal": "Controls Big cluster CPU throttling. Mode 3 is aggressive performance, Mode 1 is stock-like, Mode 0 disables throttling (dangerous!).",
             "thermalControl": "Adjust CPU and G3D thermal trip offsets relative to the captured kernel defaults. Higher values relax throttling, lower values make it more aggressive. These offsets are captured and applied after boot settles.",
             "thermalControlPerformance": "Sets all thermal offset values to 0°C, meaning the ECT's default throttling values are used.",
+            "esgShortBurst": "Makes EMS Energy Step react faster to short bursts of work. It ramps performance up in about 1 ms, lowers the busy threshold, and raises the initial post-I/O wake boost floor so bursty work gets CPU performance sooner.",
             "undervolt": "Reduces voltage to save power and reduce heat. Not recommended with Overclocking (Unlocked Mode).",
             "blockEd3": "Disables Ear Detect Mode 3, which prevents the display from lowering its refresh rate when the virtual proximity sensor is engaged. Also makes the proximity sensor less sensitive.",
             "gpuClkLock": "When enabled, prevents the GPU min/max frequencies from being changed. Useful for locking GPU clocks to a specific range.",

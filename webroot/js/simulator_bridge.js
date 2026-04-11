@@ -188,6 +188,7 @@
                 },
                 misc: {
                     block_ed3: '0',
+                    esg_short_burst: '0',
                     gpu_clklck: '0',
                     gpu_unlock: '0',
                     throttlers_protection: '0'
@@ -280,6 +281,7 @@
             defaultPresetTweaks.undervolt = { ...state.tweakCurrent.undervolt };
             defaultPresetTweaks.misc = { block_ed3: state.tweakCurrent.misc.block_ed3 };
             defaultPresetTweaks.exynos = {
+                esg_short_burst: state.tweakCurrent.misc.esg_short_burst,
                 gpu_clklck: state.tweakCurrent.misc.gpu_clklck,
                 gpu_unlock: state.tweakCurrent.misc.gpu_unlock,
                 throttlers_protection: state.tweakCurrent.misc.throttlers_protection
@@ -490,6 +492,9 @@
                 return 'little=1\nbig=1\nprime=1\ngpu=1';
             }
             if (scriptName === 'misc') {
+                if (state.config.family === '2100') {
+                    return 'block_ed3=1\nesg_short_burst=1\ngpu_clklck=1\ngpu_unlock=1\nthrottlers_protection=1';
+                }
                 return 'block_ed3=1\ngpu_clklck=1\ngpu_unlock=1\nthrottlers_protection=1';
             }
             return '';
