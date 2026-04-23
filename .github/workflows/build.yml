@@ -1,4 +1,4 @@
-name: Build FloppyCompanion
+name: Build FloppyCompanion FL
 
 on:
   push:
@@ -16,22 +16,34 @@ jobs:
         shell: bash
 
     steps:
+      # ---------------------------------------------------------
+      # Checkout
+      # ---------------------------------------------------------
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
 
+      # ---------------------------------------------------------
+      # Install dependencies
+      # ---------------------------------------------------------
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends curl unzip zip make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
 
+      # ---------------------------------------------------------
+      # Build ZIP
+      # ---------------------------------------------------------
       - name: Build zip (build.sh)
         run: |
           chmod +x ./build.sh
           ./build.sh
 
+      # ---------------------------------------------------------
+      # Locate output zip
+      # ---------------------------------------------------------
       - name: Locate output zip
         id: out
         run: |
@@ -51,28 +63,92 @@ jobs:
           zip_path="${files[0]}"
           zip_name="$(basename "$zip_path")"
           zip_stem="${zip_name%.zip}"
+
           echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
           echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
           echo "zip_stem=$zip_stem" >> "$GITHUB_OUTPUT"
 
+      # ---------------------------------------------------------
+      # Verify packaged tools
+      # ---------------------------------------------------------
       - name: Verify packaged tools
         run: |
           zipinfo -1 "${{ steps.out.outputs.zip_path }}" | grep -qx 'tools/magiskboot'
           zipinfo -1 "${{ steps.out.outputs.zip_path }}" | grep -qx 'tools/fkfeat/fkfeatctl'
 
+      # ---------------------------------------------------------
+      # Prepare artifact payload
+      # ---------------------------------------------------------
       - name: Prepare artifact payload
         run: |
           rm -rf artifact_payload
           mkdir -p artifact_payload
           unzip -q "${{ steps.out.outputs.zip_path }}" -d artifact_payload
 
+      # ---------------------------------------------------------
+      # Upload artifact
+      # ---------------------------------------------------------
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          # GitHub always wraps artifacts in its own zip. Upload the built zip
-          # contents instead, so the downloaded artifact zip is itself the
-          # installable module package rather than a zip containing another zip.
           name: ${{ steps.out.outputs.zip_stem }}
           path: artifact_payload/*
           if-no-files-found: error
           compression-level: 0
+
+      # ---------------------------------------------------------
+      # Create GitHub Release (PAT_CLASSIC required)
+      # ---------------------------------------------------------
+      - name: Create Release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.PAT_CLASSIC }}
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ github.run_number }}
+          body: |
+            Automated CI build.
+            Commit: ${{ github.sha }}
+          files: |
+            ${{ steps.out.outputs.zip_path }}
+
+      # ---------------------------------------------------------
+      # Generate simple changelog
+      # ---------------------------------------------------------
+      - name: Generate changelog
+        id: changelog
+        run: |
+          git log -n 30 --pretty=format:"• %s" > CHANGELOG.txt
+          ESCAPED=$(sed ':a;N;$!ba;s/\n/%0A/g' CHANGELOG.txt)
+          echo "escaped=$ESCAPED" >> $GITHUB_OUTPUT
+
+      # ---------------------------------------------------------
+      # Telegram: message
+      # ---------------------------------------------------------
+      - name: Send Telegram message
+        if: github.event_name == 'push'
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          CHANGELOG_ESC: ${{ steps.changelog.outputs.escaped }}
+        run: |
+          TEXT="🛠 FloppyCompanion Build #${{ github.run_number }}%0ACommit: <code>${{ github.sha }}</code>%0A%0A<b>Changelog:</b>%0A${CHANGELOG_ESC}"
+
+          curl -v -X POST \
+            "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TG_CHAT_ID}" \
+            -d parse_mode="HTML" \
+            -d text="$TEXT"
+
+      # ---------------------------------------------------------
+      # Telegram: ZIP file
+      # ---------------------------------------------------------
+      - name: Send ZIP file
+        if: github.event_name == 'push'
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: |
+          curl -v -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendDocument" \
+            -F chat_id="${TG_CHAT_ID}" \
+            -F document=@"${{ steps.out.outputs.zip_path }}"
