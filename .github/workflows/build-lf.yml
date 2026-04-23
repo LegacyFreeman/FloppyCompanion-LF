@@ -1,4 +1,4 @@
-name: Build FloppyCompanion FL
+name: Build FloppyCompanion LF
 
 on:
   push:
