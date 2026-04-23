@@ -1,0 +1,78 @@
+name: Build FloppyCompanion
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Build & upload artifact
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends curl unzip zip make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
+
+      - name: Build zip (build.sh)
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+
+      - name: Locate output zip
+        id: out
+        run: |
+          shopt -s nullglob
+          files=(out/*.zip)
+          if (( ${#files[@]} == 0 )); then
+            echo "No zip produced in out/"
+            ls -la out || true
+            exit 1
+          fi
+          if (( ${#files[@]} > 1 )); then
+            echo "Multiple zips found in out/; refusing to guess:"
+            printf '%s\n' "${files[@]}"
+            exit 1
+          fi
+
+          zip_path="${files[0]}"
+          zip_name="$(basename "$zip_path")"
+          zip_stem="${zip_name%.zip}"
+          echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+          echo "zip_stem=$zip_stem" >> "$GITHUB_OUTPUT"
+
+      - name: Verify packaged tools
+        run: |
+          zipinfo -1 "${{ steps.out.outputs.zip_path }}" | grep -qx 'tools/magiskboot'
+          zipinfo -1 "${{ steps.out.outputs.zip_path }}" | grep -qx 'tools/fkfeat/fkfeatctl'
+
+      - name: Prepare artifact payload
+        run: |
+          rm -rf artifact_payload
+          mkdir -p artifact_payload
+          unzip -q "${{ steps.out.outputs.zip_path }}" -d artifact_payload
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # GitHub always wraps artifacts in its own zip. Upload the built zip
+          # contents instead, so the downloaded artifact zip is itself the
+          # installable module package rather than a zip containing another zip.
+          name: ${{ steps.out.outputs.zip_stem }}
+          path: artifact_payload/*
+          if-no-files-found: error
+          compression-level: 0
