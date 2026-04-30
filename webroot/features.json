@@ -130,6 +130,12 @@
                             "desc": "Force SELinux Permissive mode at boot."
                         }
                     ]
+                },
+                {
+                    "key": "aosp_mode",
+                    "title": "AOSP Mode",
+                    "type": "info",
+                    "desc": "Enable hacks specific to AOSP."
                 }
             ]
         },
