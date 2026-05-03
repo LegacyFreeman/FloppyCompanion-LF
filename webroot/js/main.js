@@ -289,7 +289,6 @@ async function init() {
     const modalClose = document.getElementById('modal-close');
     const experimentalToggle = document.getElementById('experimental-toggle');
     const readonlyPatchToggle = document.getElementById('readonly-patch-toggle');
-    const exitBtn = document.getElementById('exit-btn');
     const ghLink = document.getElementById('github-link');
 
     // 2. Detection & Status
@@ -710,12 +709,6 @@ async function init() {
         const modal = document.getElementById('processing-modal');
         if (modal) modal.classList.add('hidden');
     });
-
-    if (exitBtn) {
-        exitBtn.addEventListener('click', () => {
-            if (typeof ksu !== 'undefined' && ksu.exit) ksu.exit();
-        });
-    }
 
     // External Link (Legacy)
     if (ghLink) {

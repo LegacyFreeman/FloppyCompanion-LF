@@ -808,6 +808,7 @@ body {
     gap: 24px;
     /* M3 standard spacing */
     z-index: 100;
+    pointer-events: auto;
 }
 
 .top-app-bar .title {
@@ -815,6 +816,7 @@ body {
     font-weight: 400;
     /* Regular per M3 */
     color: var(--md-sys-color-on-surface);
+    pointer-events: none;
 }
 
 /* Header Actions - always right-aligned, stacked buttons */
