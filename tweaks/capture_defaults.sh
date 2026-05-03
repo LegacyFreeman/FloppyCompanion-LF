@@ -200,6 +200,31 @@ $(      first=1
       fi
 )
     }
+$(
+      if [ -d /sys/kernel/exynos_fc ]; then
+        cat << EOF_EXYNOS_FC_DEFAULTS
+,
+    "exynos_fc": {
+$(        first=1
+        append_fc_entry() {
+          key="$1"
+          node="$2"
+          [ -f "$node" ] || return
+          val=$(cat "$node" 2>/dev/null || echo 0)
+          if [ "$first" -eq 0 ]; then
+            printf ',\n'
+          fi
+          printf '      "%s": "%s"' "$key" "$val"
+          first=0
+        }
+        append_fc_entry "cpucl0" "/sys/kernel/exynos_fc/cpucl0_clamp"
+        append_fc_entry "cpucl1" "/sys/kernel/exynos_fc/cpucl1_clamp"
+        append_fc_entry "cpucl2" "/sys/kernel/exynos_fc/cpucl2_clamp"
+)
+    }
+EOF_EXYNOS_FC_DEFAULTS
+      fi
+)
 EOF_EXYNOS_UV
     fi
 )$(

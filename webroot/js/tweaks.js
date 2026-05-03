@@ -183,6 +183,7 @@ window.reloadTweakState = async function (tweakId) {
         thermal: window.loadThermalState,
         thermal_control: window.loadThermalControlState,
         undervolt: window.loadUndervoltState,
+        exynos_fc: window.loadExynosFcState,
         misc: window.loadMiscState,
         exynos: window.loadExynosState,
         soundcontrol: window.loadSoundControlState,
@@ -221,6 +222,7 @@ window.clearTweakPersistence = async function (tweakId) {
         thermal: 'thermal.conf',
         thermal_control: 'thermal_control.conf',
         undervolt: 'undervolt.conf',
+        exynos_fc: 'exynos_fc.conf',
         soundcontrol: 'soundcontrol.conf',
         charging: 'charging.conf',
         display: 'display.conf',
@@ -795,6 +797,7 @@ function initPlatformTweaks() {
         if (typeof initThermalTweak === 'function') initThermalTweak();
         if (typeof initThermalControlTweak === 'function') initThermalControlTweak();
         if (typeof initUndervoltTweak === 'function') initUndervoltTweak();
+        if (typeof initExynosFcTweak === 'function') initExynosFcTweak();
         if (typeof initMiscTweak === 'function') initMiscTweak();
         if (typeof initExynosTweak === 'function') initExynosTweak();
         if (typeof initChargingTweak === 'function') initChargingTweak();

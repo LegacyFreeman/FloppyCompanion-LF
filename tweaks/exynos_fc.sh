@@ -1,0 +1,192 @@
+#!/system/bin/sh
+
+DATA_DIR="/data/adb/floppy_companion"
+CONFIG_FILE="$DATA_DIR/config/exynos_fc.conf"
+FC_DIR="/sys/kernel/exynos_fc"
+CPUFREQ_DIR="/sys/devices/system/cpu/cpufreq"
+CLUSTER_KEYS="cpucl0 cpucl1 cpucl2"
+
+is_valid_key() {
+    case "$1" in
+        cpucl0|cpucl1|cpucl2) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+cluster_index() {
+    case "$1" in
+        cpucl0) echo "0" ;;
+        cpucl1) echo "1" ;;
+        cpucl2) echo "2" ;;
+        *) echo "" ;;
+    esac
+}
+
+node_for_key() {
+    echo "$FC_DIR/${1}_clamp"
+}
+
+sanitize_freq() {
+    case "$1" in
+        ''|*[!0-9]*) echo "0" ;;
+        *) echo "$1" ;;
+    esac
+}
+
+read_node_or_zero() {
+    node="$1"
+    if [ -f "$node" ]; then
+        sanitize_freq "$(cat "$node" 2>/dev/null)"
+    else
+        echo "0"
+    fi
+}
+
+get_policy_for_cluster() {
+    target="$1"
+    idx=0
+    for policy_num in $(ls -d "$CPUFREQ_DIR"/policy* 2>/dev/null | sed 's/.*policy//' | sort -n); do
+        [ -d "$CPUFREQ_DIR/policy$policy_num" ] || continue
+        if [ "$idx" = "$target" ]; then
+            echo "$CPUFREQ_DIR/policy$policy_num"
+            return 0
+        fi
+        idx=$((idx + 1))
+    done
+    return 1
+}
+
+get_available_for_key() {
+    key="$1"
+    idx=$(cluster_index "$key")
+    [ -n "$idx" ] || return 0
+    policy=$(get_policy_for_cluster "$idx") || return 0
+    if [ -f "$policy/scaling_available_frequencies" ]; then
+        list=$(cat "$policy/scaling_available_frequencies" 2>/dev/null)
+        echo "$list" | tr ' ' '\n' | sed '/^$/d' | sort -n | uniq | tr '\n' ',' | sed 's/,$//'
+    fi
+}
+
+has_any_node() {
+    for key in $CLUSTER_KEYS; do
+        [ -f "$(node_for_key "$key")" ] && return 0
+    done
+    return 1
+}
+
+is_available() {
+    if has_any_node; then
+        echo "available=1"
+    else
+        echo "available=0"
+    fi
+}
+
+get_current() {
+    for key in $CLUSTER_KEYS; do
+        if [ -f "$(node_for_key "$key")" ]; then
+            echo "$key=$(read_node_or_zero "$(node_for_key "$key")")"
+        fi
+    done
+}
+
+get_all() {
+    for key in $CLUSTER_KEYS; do
+        [ -f "$(node_for_key "$key")" ] || continue
+        echo "cluster=$key"
+        echo "current=$(read_node_or_zero "$(node_for_key "$key")")"
+        echo "available=$(get_available_for_key "$key")"
+        echo "---"
+    done
+}
+
+get_saved() {
+    if [ -f "$CONFIG_FILE" ]; then
+        cat "$CONFIG_FILE"
+    fi
+}
+
+save() {
+    if [ "$#" -eq 0 ]; then
+        rm -f "$CONFIG_FILE"
+        echo "saved"
+        return 0
+    fi
+
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    : > "$CONFIG_FILE"
+
+    for arg in "$@"; do
+        key="${arg%%=*}"
+        val="${arg#*=}"
+        is_valid_key "$key" || continue
+        echo "$key=$(sanitize_freq "$val")" >> "$CONFIG_FILE"
+    done
+
+    if [ ! -s "$CONFIG_FILE" ]; then
+        rm -f "$CONFIG_FILE"
+    fi
+
+    echo "saved"
+}
+
+apply() {
+    for arg in "$@"; do
+        key="${arg%%=*}"
+        val="${arg#*=}"
+        is_valid_key "$key" || continue
+        node=$(node_for_key "$key")
+        [ -f "$node" ] || continue
+        echo "$(sanitize_freq "$val")" > "$node" 2>/dev/null
+    done
+    echo "applied"
+}
+
+apply_saved() {
+    if [ ! -f "$CONFIG_FILE" ]; then
+        return 0
+    fi
+    while IFS= read -r line; do
+        [ -n "$line" ] || continue
+        apply "$line" >/dev/null
+    done < "$CONFIG_FILE"
+    echo "applied"
+}
+
+clear_saved() {
+    rm -f "$CONFIG_FILE"
+    echo "cleared"
+}
+
+case "$1" in
+    is_available)
+        is_available
+        ;;
+    get_current)
+        get_current
+        ;;
+    get_all)
+        get_all
+        ;;
+    get_saved)
+        get_saved
+        ;;
+    save)
+        shift
+        save "$@"
+        ;;
+    apply)
+        shift
+        apply "$@"
+        ;;
+    apply_saved)
+        apply_saved
+        ;;
+    clear_saved)
+        clear_saved
+        ;;
+    *)
+        echo "usage: $0 {is_available|get_current|get_all|get_saved|save|apply|apply_saved|clear_saved}"
+        exit 1
+        ;;
+esac

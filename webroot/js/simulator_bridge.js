@@ -186,6 +186,11 @@
                     prime: '0',
                     gpu: '0'
                 },
+                exynos_fc: {
+                    cpucl0: '0',
+                    cpucl1: '0',
+                    cpucl2: '0'
+                },
                 misc: {
                     block_ed3: '0',
                     htpr: '0',
@@ -226,6 +231,7 @@
                 thermal: {},
                 thermal_control: {},
                 undervolt: {},
+                exynos_fc: {},
                 misc: {},
                 soundcontrol: {},
                 charging: {},
@@ -236,6 +242,11 @@
             ioDevices: [
                 { device: '/dev/block/sda', active: 'mq-deadline', available: 'mq-deadline,none,bfq' },
                 { device: '/dev/block/sdb', active: 'none', available: 'none,mq-deadline,bfq' }
+            ],
+            exynosFcClusters: [
+                { key: 'cpucl0', available: '300000,403000,533000,672000,799000,930000,1053000,1170000,1300000,1417000,1508000,1586000' },
+                { key: 'cpucl1', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2210000,2288000' },
+                { key: 'cpucl2', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2262000,2418000,2600000,2808000' }
             ]
         };
 
@@ -243,16 +254,21 @@
             delete state.tweakCurrent.thermal;
             delete state.tweakCurrent.thermal_control;
             delete state.tweakCurrent.undervolt;
+            delete state.tweakCurrent.exynos_fc;
             delete state.tweakCurrent.misc;
             state.tweakSaved.thermal = {};
             state.tweakSaved.thermal_control = {};
             state.tweakSaved.undervolt = {};
+            state.tweakSaved.exynos_fc = {};
             state.tweakSaved.misc = {};
         }
 
         if (config.family !== '2100') {
             delete state.tweakCurrent.thermal_control;
+            delete state.tweakCurrent.exynos_fc;
             state.tweakSaved.thermal_control = {};
+            state.tweakSaved.exynos_fc = {};
+            state.exynosFcClusters = [];
         }
 
         if (!isTrinket) {
@@ -299,6 +315,7 @@
                     prime: '-10',
                     g3d: '-13'
                 };
+                defaultPresetTweaks.exynos_fc = { ...state.tweakCurrent.exynos_fc };
             }
         }
 
@@ -485,6 +502,7 @@
                 (scriptName === 'thermal' && state.config.family === '1280') ||
                 (scriptName === 'thermal_control' && state.config.family === '2100') ||
                 (scriptName === 'undervolt' && (state.config.family === '1280' || state.config.family === '2100')) ||
+                (scriptName === 'exynos_fc' && state.config.family === '2100') ||
                 (['soundcontrol', 'charging', 'display', 'adreno', 'misc_trinket'].includes(scriptName) && state.config.family === 'trinket');
             return `available=${available ? '1' : '0'}`;
         }
@@ -509,6 +527,15 @@
         if (action === 'get_all' && scriptName === 'iosched') {
             return state.ioDevices
                 .map((d) => `device=${d.device}\nactive=${d.active}\navailable=${d.available}\n---`)
+                .join('\n');
+        }
+
+        if (action === 'get_all' && scriptName === 'exynos_fc') {
+            return (state.exynosFcClusters || [])
+                .map((cluster) => {
+                    const current = (state.tweakCurrent.exynos_fc || {})[cluster.key] || '0';
+                    return `cluster=${cluster.key}\ncurrent=${current}\navailable=${cluster.available}\n---`;
+                })
                 .join('\n');
         }
 

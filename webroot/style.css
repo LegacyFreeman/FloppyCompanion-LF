@@ -1866,6 +1866,40 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     max-inline-size: 4.35rem;
 }
 
+.tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field {
+    --_input: 2.2rem;
+    flex: 0 0 7.8rem;
+    inline-size: 7.8rem;
+    max-inline-size: 7.8rem;
+}
+
+.tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field > select {
+    min-block-size: var(--_input);
+    padding-inline-start: 0.8rem;
+    padding-inline-end: 2rem;
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface);
+}
+
+.tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field > select:focus {
+    padding-inline-start: 0.7375rem;
+    padding-inline-end: 1.9375rem;
+}
+
+.tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field::after {
+    content: "";
+    position: absolute;
+    inset-inline-end: 0.82rem;
+    top: calc(50% - 0.28rem);
+    width: 0.42rem;
+    height: 0.42rem;
+    border-inline-end: 1.5px solid var(--md-sys-color-on-surface-variant);
+    border-block-end: 1.5px solid var(--md-sys-color-on-surface-variant);
+    transform: rotate(45deg);
+    pointer-events: none;
+    z-index: 2;
+}
+
 .custom-input-row.beer.field.inline-input-field.inline-input-field-suffix {
     flex: 0 0 4.2rem;
     inline-size: 4.2rem;
