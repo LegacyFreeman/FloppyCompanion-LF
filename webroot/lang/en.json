@@ -119,7 +119,16 @@
             "current": "Current",
             "min": "Min",
             "max": "Max",
-            "noData": "No thermal data available"
+            "noData": "No thermal data available",
+            "controlSection": "Thermal Control",
+            "performanceMode": "Performance Mode",
+            "throttlingProtection": "Throttling Protection",
+            "littleOffset": "Little Offset",
+            "bigOffset": "Big Offset",
+            "primeOffset": "Prime Offset",
+            "g3dOffset": "G3D Offset",
+            "thermalMode": "Thermal Mode",
+            "customFreq": "Custom Frequency"
         }
     },
     "tweaks": {
