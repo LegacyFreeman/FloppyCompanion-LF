@@ -87,6 +87,7 @@ async function reloadAllTweakStates() {
         'thermal',
         'thermal_control',
         'undervolt',
+        'exynos_fc',
         'misc',
         'soundcontrol',
         'charging',

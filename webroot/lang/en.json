@@ -111,6 +111,24 @@
             "enabled": "@features.optionEnabled",
             "disabled": "@features.optionDisabled",
             "noData": "No GPU data available"
+        },
+        "thermal": {
+            "title": "Thermal",
+            "zonesSection": "Thermal Zones",
+            "zone": "Zone",
+            "current": "Current",
+            "min": "Min",
+            "max": "Max",
+            "noData": "No thermal data available",
+            "controlSection": "@tweaks.exynos.title",
+            "performanceMode": "@tweaks.thermalControl.performanceMode",
+            "throttlingProtection": "@tweaks.misc.throttlersProtection",
+            "littleOffset": "Little Offset",
+            "bigOffset": "Big Offset",
+            "primeOffset": "Prime Offset",
+            "g3dOffset": "G3D Offset",
+            "thermalMode": "Thermal Mode",
+            "customFreq": "Custom Frequency"
         }
     },
     "tweaks": {
@@ -231,9 +249,18 @@
             "unlockConfirmTitle": "Unlock full range?",
             "unlockConfirmBody": "<p>Values beyond 15% have <strong>no practical use</strong> and will cause immediate instability.</p><p>Are you sure you want to unlock the full range?</p>"
         },
+        "exynosFc": {
+            "title": "Exynos Frequency Control",
+            "clampTitle": "CPU Frequency Clamp",
+            "cpucl0": "@tweaks.undervolt.little",
+            "cpucl1": "@tweaks.undervolt.big",
+            "cpucl2": "@tweaks.undervolt.prime",
+            "disabled": "@features.optionDisabled"
+        },
         "misc": {
             "title": "Misc Floppy1280 Tweaks",
             "blockEd3": "Block Ear Detect Mode 3",
+            "htpr": "High Touch Polling Rate",
             "esgShortBurst": "ESG Bursty Mode",
             "gpuClkLock": "@monitor.gpu.gpuClockLock",
             "throttlersProtection": "Throttling Protection",
@@ -311,7 +338,10 @@
             "thermalControlPerformance": "Sets all thermal offset values to 0°C, meaning the ECT's default throttling values are used.",
             "esgShortBurst": "Makes EMS Energy Step react faster to short bursts of work. It ramps performance up in about 1 ms, lowers the busy threshold, and raises the initial post-I/O wake boost floor so bursty work gets CPU performance sooner.",
             "undervolt": "Reduces voltage to save power and reduce heat. Not recommended with Overclocking (Unlocked Mode).",
+            "exynosFc": "Frequency-related controls for Exynos SoCs.",
+            "exynosFcClamp": "Limits each CPU cluster to the selected maximum frequency. Disabled removes the clamp.",
             "blockEd3": "Disables Ear Detect Mode 3, which prevents the display from lowering its refresh rate when the virtual proximity sensor is engaged. Also makes the proximity sensor less sensitive.",
+            "htpr": "Enables 240Hz touch sampling.",
             "gpuClkLock": "When enabled, prevents the GPU min/max frequencies from being changed. Useful for locking GPU clocks to a specific range.",
             "throttlersProtection": "When enabled, userspace (the ROM's services and processes) is blocked from throttling the CPU and GPU, so that only kernel-level throttling happens.",
             "gpuUnlock": "Enables GPU overclocking immediately. Only works in Superfloppy overclock modes (1, 2, 3). Greyed out if Unlocked Mode is disabled or in non-OC modes.",

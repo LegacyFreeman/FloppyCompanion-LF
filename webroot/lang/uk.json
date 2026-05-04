@@ -111,6 +111,11 @@
             "enabled": "@features.optionEnabled",
             "disabled": "@features.optionDisabled",
             "noData": "Дані ГП відсутні"
+        },
+        "thermal": {
+            "controlSection": "@tweaks.exynos.title",
+            "performanceMode": "@tweaks.thermalControl.performanceMode",
+            "throttlingProtection": "@tweaks.misc.throttlersProtection"
         }
     },
     "tweaks": {

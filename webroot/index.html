@@ -24,10 +24,6 @@
 
 <body>
     <nav class="top-app-bar beer">
-        <button class="icon-button transparent circle" id="exit-btn" aria-label="Exit">
-            <!-- arrow_back -->
-            <svg class="icon-svg" viewBox="0 0 24 24" data-icon="arrow_back"></svg>
-        </button>
         <span class="title">FloppyCompanion</span>
         <!-- Header Actions Container (always right-aligned) -->
         <div class="header-actions">
@@ -600,6 +596,60 @@
                         </div>
                     </template>
 
+                    <template id="tpl-exynos-fc">
+                        <div class="card-content">
+                            <div class="tweak-section">
+                                <h3 class="tweak-section-title" style="display: inline-flex; align-items: center; gap: 6px;">
+                                    <span data-i18n="tweaks.exynosFc.clampTitle">CPU Frequency Clamp</span>
+                                    <div class="status-icon-wrapper beer">
+                                        <button type="button" class="status-icon-button icon-button transparent circle"
+                                            aria-label="Info" onclick="toggleBubble('bubble-exynos-fc-clamp', event)">
+                                            <svg class="status-icon info small" data-icon="info_outline"
+                                                width="12" height="12" style="width: 12px; height: 12px;"></svg>
+                                        </button>
+                                        <div id="bubble-exynos-fc-clamp" class="status-bubble center hidden"
+                                            data-i18n="tweaks.tooltip.exynosFcClamp"></div>
+                                    </div>
+                                </h3>
+                                <div class="tweak-row" id="exynos-fc-row-cpucl0">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.exynosFc.cpucl0">Little Cluster</span>
+                                        <span class="tweak-val" id="exynos-fc-val-cpucl0">--</span>
+                                    </div>
+                                    <div class="tweak-select-container beer field fill border round small inline-input-field exynos-fc-select-field">
+                                        <select id="exynos-fc-select-cpucl0"></select>
+                                    </div>
+                                </div>
+                                <div class="tweak-row" id="exynos-fc-row-cpucl1">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.exynosFc.cpucl1">Big Cluster</span>
+                                        <span class="tweak-val" id="exynos-fc-val-cpucl1">--</span>
+                                    </div>
+                                    <div class="tweak-select-container beer field fill border round small inline-input-field exynos-fc-select-field">
+                                        <select id="exynos-fc-select-cpucl1"></select>
+                                    </div>
+                                </div>
+                                <div class="tweak-row" id="exynos-fc-row-cpucl2" style="border-bottom: none;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.exynosFc.cpucl2">Prime Cluster</span>
+                                        <span class="tweak-val" id="exynos-fc-val-cpucl2">--</span>
+                                    </div>
+                                    <div class="tweak-select-container beer field fill border round small inline-input-field exynos-fc-select-field">
+                                        <select id="exynos-fc-select-cpucl2"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tweak-actions beer" style="margin-top: 28px;">
+                                <button class="tweak-action-btn fill action-secondary" id="exynos-fc-btn-save"
+                                    data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn fill action-secondary" id="exynos-fc-btn-apply"
+                                    data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn action-primary" id="exynos-fc-btn-save-apply"
+                                    data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
                     <template id="tpl-misc">
                         <div class="card-content">
                             <div class="tweak-row" id="misc-row-blocked3">
@@ -638,6 +688,29 @@
 
                     <template id="tpl-exynos">
                         <div class="card-content">
+                            <div class="tweak-row" id="misc-row-htpr">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label">
+                                        <span data-i18n="tweaks.misc.htpr">HTPR</span>
+                                        <div class="status-icon-wrapper beer">
+                                            <button type="button" class="status-icon-button icon-button transparent circle"
+                                                aria-label="Info" onclick="toggleBubble('bubble-misc-htpr', event)">
+                                                <svg class="status-icon info small" data-icon="info_outline"
+                                                    width="12" height="12" style="width: 12px; height: 12px;"></svg>
+                                            </button>
+                                            <div id="bubble-misc-htpr" class="status-bubble center hidden"
+                                                data-i18n="tweaks.tooltip.htpr"></div>
+                                        </div>
+                                    </span>
+                                    <span class="tweak-val" id="misc-val-htpr">--</span>
+                                </div>
+                                <div class="tweak-switch-container beer switch-scope">
+                                    <label class="switch">
+                                        <input type="checkbox" id="misc-htpr-switch">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
                             <div class="tweak-row" id="misc-row-esgshortburst">
                                 <div class="tweak-info-col">
                                     <span class="tweak-label">
@@ -1679,6 +1752,65 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card section-shell monitor-card collapsed" id="monitor-thermal-card">
+                        <div class="card-header">
+                            <span class="card-title" data-i18n="monitor.thermal.title">Thermal</span>
+                            <button id="monitor-thermal-toggle" class="icon-button monitor-toggle" aria-label="Toggle Thermal" aria-expanded="false">
+                                <svg class="icon-svg" viewBox="0 0 24 24" data-icon="expand_more"></svg>
+                            </button>
+                        </div>
+                        <div class="card-content">
+                            <div class="monitor-section">
+                                <div class="monitor-section-title" data-i18n="monitor.thermal.zonesSection">Thermal Zones</div>
+                                <div class="monitor-thermal-table">
+                                    <div class="monitor-thermal-row monitor-thermal-header">
+                                        <span class="monitor-thermal-cell" data-i18n="monitor.thermal.zone">Zone</span>
+                                        <span class="monitor-thermal-cell" data-i18n="monitor.thermal.current">Current</span>
+                                        <span class="monitor-thermal-cell" data-i18n="monitor.thermal.min">Min</span>
+                                        <span class="monitor-thermal-cell" data-i18n="monitor.thermal.max">Max</span>
+                                    </div>
+                                    <div id="monitor-thermal-list" class="monitor-thermal-body"></div>
+                                </div>
+                            </div>
+
+                            <div class="monitor-section" id="monitor-thermal-control">
+                                <div class="monitor-section-title" data-i18n="monitor.thermal.controlSection">Thermal Control</div>
+                                <div class="monitor-stat-row" id="monitor-thermal-perf-mode-row">
+                                    <span class="monitor-stat-label" data-i18n="monitor.thermal.performanceMode">Performance Mode</span>
+                                    <span class="monitor-stat-value" id="monitor-thermal-perf-mode-value">--</span>
+                                </div>
+                                <div class="monitor-stat-row" id="monitor-thermal-throttling-protection-row">
+                                    <span class="monitor-stat-label" data-i18n="monitor.thermal.throttlingProtection">Throttling Protection</span>
+                                    <span class="monitor-stat-value" id="monitor-thermal-throttling-protection-value">--</span>
+                                </div>
+                                <div class="monitor-stat-row" id="monitor-thermal-little-offset-row">
+                                    <span class="monitor-stat-label" data-i18n="monitor.thermal.littleOffset">Little Offset</span>
+                                    <span class="monitor-stat-value" id="monitor-thermal-little-offset-value">--</span>
+                                </div>
+                                <div class="monitor-stat-row" id="monitor-thermal-big-offset-row">
+                                    <span class="monitor-stat-label" data-i18n="monitor.thermal.bigOffset">Big Offset</span>
+                                    <span class="monitor-stat-value" id="monitor-thermal-big-offset-value">--</span>
+                                </div>
+                                <div class="monitor-stat-row" id="monitor-thermal-prime-offset-row">
+                                    <span class="monitor-stat-label" data-i18n="monitor.thermal.primeOffset">Prime Offset</span>
+                                    <span class="monitor-stat-value" id="monitor-thermal-prime-offset-value">--</span>
+                                </div>
+                                <div class="monitor-stat-row" id="monitor-thermal-g3d-offset-row">
+                                    <span class="monitor-stat-label" data-i18n="monitor.thermal.g3dOffset">G3D Offset</span>
+                                    <span class="monitor-stat-value" id="monitor-thermal-g3d-offset-value">--</span>
+                                </div>
+                                <div class="monitor-stat-row" id="monitor-thermal-mode-row">
+                                    <span class="monitor-stat-label" data-i18n="monitor.thermal.thermalMode">Thermal Mode</span>
+                                    <span class="monitor-stat-value" id="monitor-thermal-mode-value">--</span>
+                                </div>
+                                <div class="monitor-stat-row" id="monitor-thermal-custom-freq-row">
+                                    <span class="monitor-stat-label" data-i18n="monitor.thermal.customFreq">Custom Frequency</span>
+                                    <span class="monitor-stat-value" id="monitor-thermal-custom-freq-value">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1879,8 +2011,9 @@
     <!-- Platform-specific tweaks -->
     <script src="js/tweaks/floppy1280/thermal.js"></script>
     <script src="js/tweaks/floppy2100/thermal_control.js"></script>
-    <script src="js/tweaks/floppy1280/misc.js"></script>
-    <script src="js/tweaks/floppy1280/undervolt.js"></script>
+    <script src="js/tweaks/exynos_common/misc.js"></script>
+    <script src="js/tweaks/exynos_common/undervolt.js"></script>
+    <script src="js/tweaks/exynos_common/exynos_fc.js"></script>
     <script src="js/tweaks/floppytrinketmi/soundcontrol.js"></script>
     <script src="js/tweaks/floppytrinketmi/charging.js"></script>
     <script src="js/tweaks/floppytrinketmi/display.js"></script>

@@ -111,6 +111,11 @@
             "enabled": "@features.optionEnabled",
             "disabled": "@features.optionDisabled",
             "noData": "Nenhuma data da GPU disponível"
+        },
+        "thermal": {
+            "controlSection": "@tweaks.exynos.title",
+            "performanceMode": "@tweaks.thermalControl.performanceMode",
+            "throttlingProtection": "@tweaks.misc.throttlersProtection"
         }
     },
     "tweaks": {

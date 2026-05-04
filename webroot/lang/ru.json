@@ -111,6 +111,10 @@
             "enabled": "Включено",
             "disabled": "Выключено",
             "noData": "Данные о графическом процессоре недоступны"
+        },
+        "thermal": {
+            "controlSection": "@tweaks.exynos.title",
+            "throttlingProtection": "@tweaks.misc.throttlersProtection"
         }
     },
     "tweaks": {

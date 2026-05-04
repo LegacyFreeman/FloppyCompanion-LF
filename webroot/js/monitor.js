@@ -11,9 +11,11 @@
     let memHistory = new Array(HISTORY_POINTS).fill(null);
     let swapHistory = new Array(HISTORY_POINTS).fill(null);
     let monitorTimer = null;
+    let thermalControlTimer = null;
     let lastUseBytes = false;
     let cpuViewMode = 'cluster';
     let isMonitorActive = false;
+    let thermalMinMax = {}; // Track min/max per thermal zone
 
     function clamp(value, min, max) {
         return Math.min(Math.max(value, min), max);
@@ -36,7 +38,7 @@
         const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
         let idx = 0;
         let num = value;
-        while (num >= 1024 && idx < units.length - 1) {
+        while (num >= 1024 && idx < 2) {
             num /= 1024;
             idx++;
         }
@@ -753,6 +755,79 @@
         };
     }
 
+    async function fetchThermalData() {
+        const cmd = `for zone in /sys/class/thermal/thermal_zone*; do ` +
+            `[ -d "$zone" ] || continue; ` +
+            `type=$(cat "$zone/type" 2>/dev/null); ` +
+            `temp=$(cat "$zone/temp" 2>/dev/null); ` +
+            `echo "$type|$temp"; ` +
+            `done`;
+        const output = await window.exec(cmd);
+        if (!output) return null;
+        const lines = output.trim().split('\n').filter(Boolean);
+        const zones = [];
+        for (const line of lines) {
+            const parts = line.split('|');
+            if (parts.length >= 2) {
+                const type = parts[0].trim();
+                const temp = parseInt(parts[1], 10);
+                if (type && !isNaN(temp)) {
+                    zones.push({
+                        type,
+                        temp: temp / 1000
+                    });
+                }
+            }
+        }
+        return zones;
+    }
+
+    async function fetchThermalControlData() {
+        const info = window.deviceInfo || {};
+        const is2100 = info.is2100;
+        const is1280 = info.is1280;
+
+        let data = { platform: 'unknown' };
+
+        if (is2100) {
+            data.platform = '2100';
+            // Read sysfs nodes directly for Floppy2100
+            const cmd = `cat /proc/exynos_tmu/BIG_offset 2>/dev/null || echo ""; ` +
+                `cat /proc/exynos_tmu/MID_offset 2>/dev/null || echo ""; ` +
+                `cat /proc/exynos_tmu/LITTLE_offset 2>/dev/null || echo ""; ` +
+                `cat /proc/exynos_tmu/G3D_offset 2>/dev/null || echo ""; ` +
+                `cat /sys/kernel/throttlers_protection 2>/dev/null || echo ""`;
+            const output = await window.exec(cmd);
+            if (output) {
+                const lines = output.trim().split('\n');
+                data.big_offset = lines[0] || '';
+                data.mid_offset = lines[1] || '';
+                data.little_offset = lines[2] || '';
+                data.g3d_offset = lines[3] || '';
+                data.throttling_protection = lines[4] || '';
+            }
+            // Read performance mode from config
+            const perfCmd = `cat /data/adb/floppy_companion/config/thermal_control.conf 2>/dev/null | grep '^performance_mode=' | cut -d= -f2 || echo "0"`;
+            const perfOutput = await window.exec(perfCmd);
+            if (perfOutput) {
+                data.performance_mode = perfOutput.trim();
+            }
+        } else if (is1280) {
+            data.platform = '1280';
+            // Read sysfs nodes directly for Floppy1280
+            const cmd = `cat /sys/devices/platform/10080000.BIG/thermal_mode 2>/dev/null || echo ""; ` +
+                `cat /sys/devices/platform/10080000.BIG/emergency_frequency 2>/dev/null || echo ""`;
+            const output = await window.exec(cmd);
+            if (output) {
+                const lines = output.trim().split('\n');
+                data.mode = lines[0] || '';
+                data.custom_freq = lines[1] || '';
+            }
+        }
+
+        return data;
+    }
+
     function parseZramAlgorithm(raw) {
         const match = raw.match(/\[([^\]]+)\]/);
         if (match) return match[1];
@@ -957,28 +1032,162 @@
         }
     }
 
+    function updateThermalUI(data) {
+        if (!data || !Array.isArray(data)) {
+            const list = document.getElementById('monitor-thermal-list');
+            if (list) list.innerHTML = `<div class="monitor-thermal-row"><span class="monitor-thermal-cell" colspan="4">${t('monitor.thermal.noData')}</span></div>`;
+            return;
+        }
+
+        const list = document.getElementById('monitor-thermal-list');
+        if (!list) return;
+
+        let html = '';
+        for (const zone of data) {
+            const temp = zone.temp;
+            const type = zone.type;
+
+            // Initialize min/max to current temp on first read, then track
+            if (!thermalMinMax[type]) {
+                thermalMinMax[type] = { min: temp, max: temp };
+            } else {
+                if (temp < thermalMinMax[type].min) thermalMinMax[type].min = temp;
+                if (temp > thermalMinMax[type].max) thermalMinMax[type].max = temp;
+            }
+
+            const min = thermalMinMax[type].min.toFixed(1);
+            const max = thermalMinMax[type].max.toFixed(1);
+            const current = temp.toFixed(1);
+            const isHigh = temp >= 70;
+            const tempClass = isHigh ? 'warning-text' : '';
+
+            html += `
+                <div class="monitor-thermal-row">
+                    <span class="monitor-thermal-cell">${type}</span>
+                    <span class="monitor-thermal-cell ${tempClass}">${current}°C</span>
+                    <span class="monitor-thermal-cell">${min}°C</span>
+                    <span class="monitor-thermal-cell">${max}°C</span>
+                </div>
+            `;
+        }
+        list.innerHTML = html;
+    }
+
+    function updateThermalControlUI(data) {
+        if (!data || data.platform === 'unknown') {
+            return;
+        }
+
+        if (data.platform === '2100') {
+            // Floppy2100: Show and update performance mode, throttling protection, and thermal offsets
+            const perfModeRow = document.getElementById('monitor-thermal-perf-mode-row');
+            const perfModeValue = document.getElementById('monitor-thermal-perf-mode-value');
+            if (perfModeRow && perfModeValue) {
+                perfModeRow.style.display = 'flex';
+                perfModeValue.textContent = data.performance_mode === '1' ? 'Enabled' : 'Disabled';
+            }
+
+            const throttleRow = document.getElementById('monitor-thermal-throttling-protection-row');
+            const throttleValue = document.getElementById('monitor-thermal-throttling-protection-value');
+            if (throttleRow && throttleValue) {
+                throttleRow.style.display = 'flex';
+                throttleValue.textContent = data.throttling_protection === '1' ? 'Enabled' : 'Disabled';
+            }
+
+            // Show and update offset rows
+            const offsets = [
+                { key: 'little_offset', rowId: 'monitor-thermal-little-offset-row', valueId: 'monitor-thermal-little-offset-value' },
+                { key: 'big_offset', rowId: 'monitor-thermal-big-offset-row', valueId: 'monitor-thermal-big-offset-value' },
+                { key: 'mid_offset', rowId: 'monitor-thermal-prime-offset-row', valueId: 'monitor-thermal-prime-offset-value' },
+                { key: 'g3d_offset', rowId: 'monitor-thermal-g3d-offset-row', valueId: 'monitor-thermal-g3d-offset-value' }
+            ];
+            for (const offset of offsets) {
+                const row = document.getElementById(offset.rowId);
+                const value = document.getElementById(offset.valueId);
+                if (row && value) {
+                    if (data[offset.key] !== undefined && data[offset.key] !== '') {
+                        row.style.display = 'flex';
+                        value.textContent = data[offset.key] + '°C';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+
+            // Hide 1280-specific rows
+            document.getElementById('monitor-thermal-mode-row').style.display = 'none';
+            document.getElementById('monitor-thermal-custom-freq-row').style.display = 'none';
+
+        } else if (data.platform === '1280') {
+            // Floppy1280: Show and update thermal mode and custom frequency
+            const modeRow = document.getElementById('monitor-thermal-mode-row');
+            const modeValue = document.getElementById('monitor-thermal-mode-value');
+            if (modeRow && modeValue) {
+                modeRow.style.display = 'flex';
+                const modeLabels = { '0': 'Disabled', '1': 'Stock', '2': 'Custom', '3': 'Performance' };
+                modeValue.textContent = modeLabels[data.mode] || data.mode || '--';
+            }
+
+            const customFreqRow = document.getElementById('monitor-thermal-custom-freq-row');
+            const customFreqValue = document.getElementById('monitor-thermal-custom-freq-value');
+            if (customFreqRow && customFreqValue) {
+                if (data.mode === '2' && data.custom_freq) {
+                    customFreqRow.style.display = 'flex';
+                    customFreqValue.textContent = data.custom_freq;
+                } else {
+                    customFreqRow.style.display = 'none';
+                }
+            }
+
+            // Hide 2100-specific rows
+            document.getElementById('monitor-thermal-perf-mode-row').style.display = 'none';
+            document.getElementById('monitor-thermal-throttling-protection-row').style.display = 'none';
+            document.getElementById('monitor-thermal-little-offset-row').style.display = 'none';
+            document.getElementById('monitor-thermal-big-offset-row').style.display = 'none';
+            document.getElementById('monitor-thermal-prime-offset-row').style.display = 'none';
+            document.getElementById('monitor-thermal-g3d-offset-row').style.display = 'none';
+        }
+    }
+
     async function refreshMonitor() {
         if (!isMonitorActive || document.hidden) return;
-        const [memData, cpuData, gpuData] = await Promise.all([
+        const [memData, cpuData, gpuData, thermalData] = await Promise.all([
             fetchMonitorData(),
             fetchCpuData(),
-            fetchGpuData()
+            fetchGpuData(),
+            fetchThermalData()
         ]);
         updateMonitorUI(memData);
         updateCpuUI(cpuData);
         updateGpuUI(gpuData);
+        updateThermalUI(thermalData);
+    }
+
+    async function refreshThermalControl() {
+        if (!isMonitorActive || document.hidden) return;
+        const thermalControlData = await fetchThermalControlData();
+        updateThermalControlUI(thermalControlData);
     }
 
     function startMonitorUpdates() {
         if (monitorTimer) return;
         refreshMonitor();
         monitorTimer = setInterval(refreshMonitor, UPDATE_INTERVAL_MS);
+        // Thermal control updates less frequently (every 5 seconds)
+        // Fetch immediately on first load, then start slow refresh
+        refreshThermalControl().then(() => {
+            thermalControlTimer = setInterval(refreshThermalControl, 5000);
+        });
     }
 
     function stopMonitorUpdates() {
         if (!monitorTimer) return;
         clearInterval(monitorTimer);
         monitorTimer = null;
+        if (thermalControlTimer) {
+            clearInterval(thermalControlTimer);
+            thermalControlTimer = null;
+        }
     }
 
     function initMonitor() {
@@ -988,6 +1197,7 @@
         // Reset history arrays
         memHistory = new Array(HISTORY_POINTS).fill(null);
         swapHistory = new Array(HISTORY_POINTS).fill(null);
+        thermalMinMax = {}; // Reset thermal min/max tracking
 
         const memCanvas = document.getElementById('monitor-mem-graph');
         const swapCanvas = document.getElementById('monitor-swap-graph');
@@ -1000,6 +1210,42 @@
         setupCollapse('monitor-memory-card', 'monitor-memory-toggle');
         setupCollapse('monitor-cpu-card', 'monitor-cpu-toggle');
         setupCollapse('monitor-gpu-card', 'monitor-gpu-toggle');
+        setupCollapse('monitor-thermal-card', 'monitor-thermal-toggle');
+
+        // Show platform-specific thermal control rows immediately based on platform
+        const info = window.deviceInfo || {};
+        const is2100 = info.is2100;
+        const is1280 = info.is1280;
+
+        if (is2100) {
+            document.getElementById('monitor-thermal-perf-mode-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-throttling-protection-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-little-offset-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-big-offset-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-prime-offset-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-g3d-offset-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-mode-row').style.display = 'none';
+            document.getElementById('monitor-thermal-custom-freq-row').style.display = 'none';
+        } else if (is1280) {
+            document.getElementById('monitor-thermal-mode-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-custom-freq-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-perf-mode-row').style.display = 'none';
+            document.getElementById('monitor-thermal-throttling-protection-row').style.display = 'none';
+            document.getElementById('monitor-thermal-little-offset-row').style.display = 'none';
+            document.getElementById('monitor-thermal-big-offset-row').style.display = 'none';
+            document.getElementById('monitor-thermal-prime-offset-row').style.display = 'none';
+            document.getElementById('monitor-thermal-g3d-offset-row').style.display = 'none';
+        } else {
+            // Platform unknown - show all rows, will be corrected when data arrives
+            document.getElementById('monitor-thermal-perf-mode-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-throttling-protection-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-little-offset-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-big-offset-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-prime-offset-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-g3d-offset-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-mode-row').style.display = 'flex';
+            document.getElementById('monitor-thermal-custom-freq-row').style.display = 'flex';
+        }
 
         document.addEventListener('tabChanged', (event) => {
             const idx = event?.detail?.index;

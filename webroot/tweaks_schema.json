@@ -59,6 +59,20 @@
           }
         },
         {
+          "id": "exynos_fc",
+          "cardId": "exynos-fc-card",
+          "pendingId": "exynos-fc-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-exynos-fc",
+          "iconKey": "tune",
+          "titleKey": "tweaks.exynosFc.title",
+          "tooltipKey": "tweaks.tooltip.exynosFc",
+          "requires": {
+            "var": "kernelName",
+            "eq": "Floppy2100"
+          }
+        },
+        {
           "id": "misc",
           "cardId": "misc-card",
           "pendingId": "misc-pending-indicator",

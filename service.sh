@@ -143,6 +143,10 @@ if [ -f "$MODDIR/tweaks/undervolt.sh" ]; then
     sh "$MODDIR/tweaks/undervolt.sh" apply_saved
 fi
 
+if [ -f "$MODDIR/tweaks/exynos_fc.sh" ]; then
+    sh "$MODDIR/tweaks/exynos_fc.sh" apply_saved
+fi
+
 # Misc Floppy1280 Tweaks
 if [ -f "$MODDIR/tweaks/misc.sh" ]; then
     sh "$MODDIR/tweaks/misc.sh" apply_saved
