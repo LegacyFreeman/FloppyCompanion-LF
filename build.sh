@@ -103,15 +103,15 @@ if [ ! -d "$FKFEAT_DIR" ]; then
 fi
 
 echo "Building fkfeat..."
-make -C "$FKFEAT_DIR" clean
-make -C "$FKFEAT_DIR" CC=aarch64-linux-gnu-gcc
+make -s -C "$FKFEAT_DIR" clean
+make -s -C "$FKFEAT_DIR" CC=aarch64-linux-gnu-gcc
 
 if [ -f "../$MAGISK_APK" ]; then
     rm "../$MAGISK_APK"
 fi
 
 echo "Downloading $MAGISK_APK..."
-curl -L -o "../$MAGISK_APK" "$MAGISK_URL"
+curl -L -o "../$MAGISK_APK" "$MAGISK_URL" 2>/dev/null
 
 # Extract ARM64 magiskboot
 echo "Extracting magiskboot (arm64)..."
