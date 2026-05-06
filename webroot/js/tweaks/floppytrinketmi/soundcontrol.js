@@ -8,12 +8,30 @@ let scReferenceState = { hp_l: '0', hp_r: '0', mic: '0' };
 let scDefaultState = { hp_l: '0', hp_r: '0', mic: '0' };
 
 const runSoundControlBackend = (...args) => window.runTweakBackend('soundcontrol', ...args);
+const SOUND_CONTROL_HP_MIN = -40;
+const SOUND_CONTROL_HP_MAX = 20;
+const SOUND_CONTROL_MIC_MIN = -10;
+const SOUND_CONTROL_MIC_MAX = 20;
+
+function clampSoundControlGain(val, min, max) {
+    const parsed = parseInt(val, 10);
+    if (Number.isNaN(parsed)) return 0;
+    return Math.max(min, Math.min(max, parsed));
+}
+
+function clampHeadphoneGain(val) {
+    return clampSoundControlGain(val, SOUND_CONTROL_HP_MIN, SOUND_CONTROL_HP_MAX);
+}
+
+function clampMicGain(val) {
+    return clampSoundControlGain(val, SOUND_CONTROL_MIC_MIN, SOUND_CONTROL_MIC_MAX);
+}
 
 function normalizeSoundControlState(state = {}) {
     return {
-        hp_l: state.hp_l || '0',
-        hp_r: state.hp_r || '0',
-        mic: state.mic || '0'
+        hp_l: String(clampHeadphoneGain(state.hp_l || '0')),
+        hp_r: String(clampHeadphoneGain(state.hp_r || '0')),
+        mic: String(clampMicGain(state.mic || '0'))
     };
 }
 
@@ -192,7 +210,7 @@ function updateSoundControlSliderTicks(slider) {
     if (!slider) return;
     const sliderShell = slider.closest('.tweak-beer-slider') || slider;
     const color = getComputedStyle(document.body).getPropertyValue('--md-sys-color-outline').trim() || '#747775';
-    const ticks = 21; // 0-20 = 21 ticks
+    const ticks = 13;
 
     const lines = [];
     for (let i = 0; i < ticks; i++) {
@@ -257,7 +275,7 @@ function initSoundControlTweak() {
     const inputHp = document.getElementById('soundcontrol-input-hp');
 
     function syncCombinedHp(val) {
-        val = Math.max(0, Math.min(20, parseInt(val) || 0));
+        val = clampHeadphoneGain(val);
         scPendingState.hp_l = String(val);
         scPendingState.hp_r = String(val);
         if (sliderHp) sliderHp.value = val;
@@ -274,7 +292,7 @@ function initSoundControlTweak() {
     const inputHpL = document.getElementById('soundcontrol-input-hp-l');
 
     function syncHpL(val) {
-        val = Math.max(0, Math.min(20, parseInt(val) || 0));
+        val = clampHeadphoneGain(val);
         scPendingState.hp_l = String(val);
         if (sliderHpL) sliderHpL.value = val;
         if (inputHpL) inputHpL.value = val;
@@ -290,7 +308,7 @@ function initSoundControlTweak() {
     const inputHpR = document.getElementById('soundcontrol-input-hp-r');
 
     function syncHpR(val) {
-        val = Math.max(0, Math.min(20, parseInt(val) || 0));
+        val = clampHeadphoneGain(val);
         scPendingState.hp_r = String(val);
         if (sliderHpR) sliderHpR.value = val;
         if (inputHpR) inputHpR.value = val;
@@ -306,7 +324,7 @@ function initSoundControlTweak() {
     const inputMic = document.getElementById('soundcontrol-input-mic');
 
     function syncMic(val) {
-        val = Math.max(0, Math.min(20, parseInt(val) || 0));
+        val = clampMicGain(val);
         scPendingState.mic = String(val);
         if (sliderMic) sliderMic.value = val;
         if (inputMic) inputMic.value = val;
@@ -322,7 +340,7 @@ function initSoundControlTweak() {
         if (el && window.preventSwipePropagation) window.preventSwipePropagation(el);
     });
 
-    // Add ticks to sliders (21 ticks for 0-20 range)
+    // Add ticks to sliders
     [sliderHp, sliderHpL, sliderHpR, sliderMic].forEach(slider => {
         if (slider) updateSoundControlSliderTicks(slider);
     });
