@@ -92,18 +92,6 @@ SOUND_HP_L="0"
 SOUND_HP_R="0"
 SOUND_MIC="0"
 
-if [ "$IS_TRINKET" = "1" ]; then
-    if ! apply_predefined_tweak_defaults soundcontrol; then
-        SOUND_HP=$(cat /sys/kernel/sound_control/headphone_gain 2>/dev/null || echo "0 0")
-        SOUND_HP_L=$(echo "$SOUND_HP" | awk '{print $1}')
-        SOUND_HP_R=$(echo "$SOUND_HP" | awk '{print $2}')
-        SOUND_MIC=$(cat /sys/kernel/sound_control/mic_gain 2>/dev/null || echo "0")
-        [ -z "$SOUND_HP_L" ] && SOUND_HP_L="0"
-        [ -z "$SOUND_HP_R" ] && SOUND_HP_R="0"
-        [ -z "$SOUND_MIC" ] && SOUND_MIC="0"
-    fi
-fi
-
 # --- Output JSON ---
 cat > "$OUTPUT_FILE" << EOF
 {

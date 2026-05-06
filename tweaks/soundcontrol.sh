@@ -7,6 +7,36 @@ CONFIG_FILE="$DATA_DIR/config/soundcontrol.conf"
 NODE_HEADPHONE="/sys/kernel/sound_control/headphone_gain"
 NODE_MIC="/sys/kernel/sound_control/mic_gain"
 
+sanitize_gain() {
+    local val="$1"
+
+    if ! echo "$val" | grep -Eq '^-?[0-9]+$'; then
+        echo "0"
+        return
+    fi
+
+    if [ "$val" -lt 0 ]; then
+        echo "0"
+    elif [ "$val" -gt 20 ]; then
+        echo "20"
+    else
+        echo "$val"
+    fi
+}
+
+read_headphone_gain() {
+    local raw="$1"
+    set -- $raw
+
+    local left="${1:-0}"
+    local right="${2:-$left}"
+
+    left=$(sanitize_gain "$left")
+    right=$(sanitize_gain "$right")
+
+    echo "$left $right"
+}
+
 # Check if sound control is available
 is_available() {
     if [ -f "$NODE_HEADPHONE" ] || [ -f "$NODE_MIC" ]; then
@@ -24,14 +54,15 @@ get_current() {
     
     if [ -f "$NODE_HEADPHONE" ]; then
         local hp_val=$(cat "$NODE_HEADPHONE" 2>/dev/null || echo "0 0")
-        hp_l=$(echo "$hp_val" | awk '{print $1}')
-        hp_r=$(echo "$hp_val" | awk '{print $2}')
-        [ -z "$hp_l" ] && hp_l="0"
-        [ -z "$hp_r" ] && hp_r="0"
+        local hp_pair
+        hp_pair=$(read_headphone_gain "$hp_val")
+        hp_l="${hp_pair%% *}"
+        hp_r="${hp_pair#* }"
     fi
     
     if [ -f "$NODE_MIC" ]; then
         mic=$(cat "$NODE_MIC" 2>/dev/null || echo "0")
+        mic=$(sanitize_gain "$mic")
     fi
     
     echo "hp_l=$hp_l"
@@ -61,6 +92,13 @@ save() {
         for arg in "$@"; do
             key="${arg%%=*}"
             val="${arg#*=}"
+
+            case "$key" in
+                hp_l|hp_r|mic)
+                    val=$(sanitize_gain "$val")
+                    ;;
+            esac
+
             [ -n "$key" ] && [ -n "$val" ] && echo "$key=$val" >> "$CONFIG_FILE"
         done
 
@@ -77,8 +115,12 @@ save() {
     local mic="$3"
     
     [ -z "$hp_l" ] && hp_l="0"
-    [ -z "$hp_r" ] && hp_r="0"
+    [ -z "$hp_r" ] && hp_r="$hp_l"
     [ -z "$mic" ] && mic="0"
+
+    hp_l=$(sanitize_gain "$hp_l")
+    hp_r=$(sanitize_gain "$hp_r")
+    mic=$(sanitize_gain "$mic")
     
     mkdir -p "$(dirname "$CONFIG_FILE")"
     cat > "$CONFIG_FILE" << EOF
@@ -94,6 +136,12 @@ apply() {
     local hp_l="$1"
     local hp_r="$2"
     local mic="$3"
+
+    [ -z "$hp_r" ] && hp_r="$hp_l"
+
+    hp_l=$(sanitize_gain "$hp_l")
+    hp_r=$(sanitize_gain "$hp_r")
+    mic=$(sanitize_gain "$mic")
     
     # Apply headphone gain (write as "L R")
     if [ -f "$NODE_HEADPHONE" ] && [ -n "$hp_l" ] && [ -n "$hp_r" ]; then
