@@ -33,7 +33,7 @@
   },
   "ems_efficient": {
     "title": "Modaliteti EMS Efficient",
-    "desc": "Aktivizo EMS efficient scheduler mode. Ul performancën dhe përmirëson baterinë."
+    "desc": "Aktivizo modalitetin efikas të scheduler-it EMS. Ul performancën dhe përmirëson baterinë."
   },
   "aosp_mode": {
     "title": "Modaliteti AOSP",
@@ -41,11 +41,11 @@
   },
   "no_init_protection": {
     "title": "Hiq mbrojtjen Init",
-    "desc": "Lejo Power HAL dhe init scripts të ndryshojnë kernel knobs. Aktivizoje nëse dëshiron që ROM-i të kontrollojë performancën."
+    "desc": "Lejo Power HAL dhe skriptet init të ndryshojnë parametrat e kernel-it. Aktivizoje nëse dëshiron që ROM-i të kontrollojë performancën."
   },
   "init_protection": {
     "title": "Mbrojtja Init",
-    "desc": "Parandalo Power HAL dhe init scripts nga ndryshimi i kernel knobs. Çaktivizoje nëse dëshiron që ROM-i të kontrollojë performancën."
+    "desc": "Parandalo Power HAL dhe skriptet init nga ndryshimi i parametrave të kernel-it. Çaktivizoje nëse dëshiron që ROM-i të kontrollojë performancën."
   },
   "legacy_timestamp_source": {
     "title": "Timestamp i vjetër",
@@ -53,15 +53,15 @@
   },
   "no_msm_perf_boost": {
     "title": "Çaktivizo MSM Boost",
-    "desc": "Parandalon MSM Performance nga mbishkrimi i frekuencave min/maks të CPU-së. Mund ta bëjë pajisjen më pak responsive."
+    "desc": "Parandalon MSM Performance nga mbishkrimi i frekuencave min/maks të CPU-së. Mund ta bëjë pajisjen më pak reaguese."
   },
   "warm_reboot": {
     "title": "Detyro rinisje të ngrohtë",
-    "desc": "Ruaj RAM-in gjatë rinisjes për ti mbledhur logs më lehtë. Rekomandohet vetëm për debugging; mund të prishë WiFi."
+    "desc": "Ruaj RAM-in gjatë rinisjes për t’i mbledhur regjistrat më lehtë. Rekomandohet vetëm për debug; mund të prishë WiFi."
   },
   "uname_bpf_spoof": {
     "title": "Maskim BPF",
-    "desc": "Spoof versionin e Linux-it për mbështetje BPF. Menaxhohet nga jashtë; ndryshimi manual mund të shkaktojë bootloop.",
+    "desc": "Maskon versionin e Linux-it për mbështetje BPF. Menaxhohet nga jashtë; ndryshimi manual mund të shkaktojë bootloop.",
     "options": {
       "1": {
         "label": "Maskim i pjesshëm",
@@ -75,7 +75,7 @@
   },
   "mass_storage_hack": {
     "title": "Rregullim për mbështetje Mass Storage",
-    "desc": "Injekton mass_storage gadget handling në skriptin init.exynos2100.usb.rc të vendorit, që aplikacione si DriveDroid të funksionojnë."
+    "desc": "Injekton trajtimin e gadget mass_storage në skriptin init.exynos2100.usb.rc të vendorit, që aplikacione si DriveDroid të funksionojnë."
   },
   "selinux_mode": {
     "title": "Detyro modalitetin SELinux",
