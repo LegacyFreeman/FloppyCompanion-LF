@@ -1,0 +1,98 @@
+{
+  "1280": {
+    "superfloppy": {
+      "title": "Modaliteti i zhbllokuar",
+      "desc": "Rregullime të frekuencave CPU dhe GPU për FloppyKernel.",
+      "options": {
+        "1": {
+          "label": "Aktivizuar (Overclock)",
+          "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.496 GHz (OC), GPU = 1.209 GHz (OC), UV i çaktivizuar."
+        },
+        "2": {
+          "label": "MegaFloppy (Overclock, me rrezik)",
+          "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.6 GHz (OC), GPU = 1.209 GHz (OC), UV i çaktivizuar."
+        },
+        "3": {
+          "label": "UltraFloppy (Overclock, me rrezik)",
+          "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.704 GHz (OC), GPU = 1.209 GHz (OC), UV i çaktivizuar."
+        },
+        "4": {
+          "label": "CoolFloppy (Underclock)",
+          "desc": "CL0 = 2.0 GHz (stock), CL1 = 2.112 GHz (UC), GPU = 897 MHz (stock), UV i aktivizuar."
+        },
+        "5": {
+          "label": "BalancedFloppy (Overclock)",
+          "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.4 GHz (stock), GPU = 897 MHz (stock), UV i çaktivizuar."
+        }
+      }
+    }
+  },
+  "force_perm": {
+    "title": "Detyro Permissive",
+    "desc": "Detyro modalitetin SELinux Permissive. Për dev."
+  },
+  "ems_efficient": {
+    "title": "Modaliteti EMS Efficient",
+    "desc": "Aktivizo modalitetin efikas të planifikuesit EMS. Ul performancën dhe përmirëson baterinë."
+  },
+  "aosp_mode": {
+    "title": "Modaliteti AOSP",
+    "desc": "Aktivizo rregullime specifike për AOSP."
+  },
+  "no_init_protection": {
+    "title": "Hiq mbrojtjen Init",
+    "desc": "Lejo Power HAL dhe skriptet init të ndryshojnë parametrat e kernel-it. Aktivizoje nëse dëshiron që ROM-i të kontrollojë performancën."
+  },
+  "init_protection": {
+    "title": "Mbrojtja Init",
+    "desc": "Parandalo Power HAL dhe skriptet init nga ndryshimi i parametrave të kernel-it. Çaktivizoje nëse dëshiron që ROM-i të kontrollojë performancën."
+  },
+  "legacy_timestamp_source": {
+    "title": "Timestamp i vjetër",
+    "desc": "Rregullon problemet me gjatësinë e regjistrimit të videos në ROM-e me HAL kamera të vjetër."
+  },
+  "no_msm_perf_boost": {
+    "title": "Çaktivizo MSM Boost",
+    "desc": "Parandalon MSM Performance nga mbishkrimi i frekuencave min/maks të CPU-së. Mund të ulë reagimin e pajisjes."
+  },
+  "warm_reboot": {
+    "title": "Detyro rinisje të ngrohtë",
+    "desc": "Ruaj RAM-in gjatë rinisjes për t'i mbledhur regjistrat më lehtë. Rekomandohet vetëm për debug, mund të prishë WiFi."
+  },
+  "uname_bpf_spoof": {
+    "title": "Maskim BPF",
+    "desc": "Maskon versionin e Linux-it për mbështetje BPF. Menaxhohet nga jashtë; ndryshimi manual mund të shkaktojë bootloop.",
+    "options": {
+      "1": {
+        "label": "Maskim i pjesshëm",
+        "desc": "Maskon uname vetëm për netbpfload."
+      },
+      "5": {
+        "label": "Maskim i plotë",
+        "desc": "Maskon uname për disa shërbime të lidhura me bpf."
+      }
+    }
+  },
+  "mass_storage_hack": {
+    "title": "Rregullim për mbështetje Mass Storage",
+    "desc": "Injekton trajtimin e gadget mass_storage në skriptin init.exynos2100.usb.rc të vendorit, që aplikacione si DriveDroid të funksionojnë."
+  },
+  "selinux_mode": {
+    "title": "Detyro modalitetin SELinux",
+    "desc": "Detyro modalitetin SELinux. Për dev.",
+    "options": {
+      "0": {
+        "label": "Parazgjedhur",
+        "desc": "Përdor modalitetin parazgjedhje SELinux të kernel-it."
+      },
+      "1": {
+        "label": "Gjithmonë Enforcing",
+        "desc": "Detyro modalitetin SELinux Enforcing gjatë nisjes."
+      },
+      "2": {
+        "label": "Gjithmonë Permissive",
+        "desc": "Detyro modalitetin SELinux Permissive gjatë nisjes."
+      }
+    }
+  }
+}
