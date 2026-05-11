@@ -43,6 +43,10 @@
         "title": "Init Korumasını Kaldır",
         "desc": "Power HAL'lerin ve init betiklerinin kernel ayarlarını değiştirmesine izin ver. Performansı ROM'un kontrol etmesini istiyorsanız etkinleştirin."
     },
+    "init_protection": {
+        "title": "Init Koruması",
+        "desc": "Power HAL'lerin ve init betiklerinin kernel ayarlarını değiştirmesini engeller. Performansı ROM'un kontrol etmesini istiyorsanız devre dışı bırakın."
+    },
     "legacy_timestamp_source": {
         "title": "Eski Zaman Damgası",
         "desc": "Eski kamera HAL'lerine sahip ROM'larda video kayıt uzunluğu sorunlarını düzeltir."
@@ -66,6 +70,28 @@
             "5": {
                 "label": "Tam sahtecilik",
                 "desc": "Birkaç bpf ile ilgili servis için uname'i sahte gösterir."
+            }
+        }
+    },
+    "mass_storage_hack": {
+        "title": "Mass Storage Destek Yaması",
+        "desc": "DriveDroid gibi uygulamaların çalışmasına izin vermek için mass_storage gadget işleyicisini vendor'un init.exynos2100.usb.rc betiğine enjekte eder."
+    },
+    "selinux_mode": {
+        "title": "SELinux Modunu Zorla",
+        "desc": "SELinux modunu zorla. Geliştiriciler içindir.",
+        "options": {
+            "0": {
+                "label": "Varsayılan",
+                "desc": "Kernelin varsayılan SELinux modunu kullan."
+            },
+            "1": {
+                "label": "Her Zaman Enforcing",
+                "desc": "Önyüklemede SELinux Enforcing modunu zorla."
+            },
+            "2": {
+                "label": "Her Zaman Permissive",
+                "desc": "Önyüklemede SELinux Permissive modunu zorla."
             }
         }
     }

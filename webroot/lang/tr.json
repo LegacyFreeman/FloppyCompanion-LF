@@ -13,10 +13,10 @@
         "unknown": "Bilinmiyor",
         "kernelStatus": "Kernel Durumu",
         "device": "Cihaz",
-        "linux": "Linux Sürümü",
         "variant": "Varyant",
         "version": "Sürüm",
         "buildType": "Yapı Türü",
+        "linux": "Linux sürümü",
         "tools": "Araçlar",
         "saveLastKmsg": "last_kmsg Kaydet",
         "saveDmesg": "dmesg Kaydet",
@@ -31,7 +31,7 @@
     },
     "features": {
         "title": "Özellikler",
-        "kernelFeatures": "Kernel Özellİklerİ",
+        "kernelFeatures": "Kernel Özellikleri",
         "showExperimental": "Deneysel özellikleri göster",
         "allowReadOnly": "Salt okunur özelliklerin yamanmasına izin ver",
         "apply": "Uygula",
@@ -46,7 +46,8 @@
         "tooltipReadOnlyAllowed": "Bu özelliğin durumunu değiştirmeye geçici olarak izin verilir, ancak kaydedilmeyecektir.",
         "tooltipReadOnlyBlocked": "Bu özelliğin durumu normalde arayüzden değiştirilemez (salt okunur).",
         "tooltipExperimental": "Deneysel",
-        "currentLabel": "Mevcut:"
+        "currentLabel": "Mevcut:",
+        "noSupportYet": "Bu cihaz için özellik desteği henüz mevcut değil."
     },
     "monitor": {
         "title": "İzleme",
@@ -69,10 +70,10 @@
             "totalSuffix": "toplam"
         },
         "cpu": {
-            "title": "İşlemcİ",
+            "title": "İşlemci",
             "viewCluster": "Küme başına",
             "viewCore": "Çekirdek başına",
-            "freqSection": "Çekİrdekler",
+            "freqSection": "Çekirdekler",
             "statusSection": "@features.title",
             "currentLabel": "Mevcut",
             "minLabel": "Min",
@@ -110,6 +111,24 @@
             "enabled": "@features.optionEnabled",
             "disabled": "@features.optionDisabled",
             "noData": "GPU verisi yok"
+        },
+        "thermal": {
+            "title": "Termal",
+            "zonesSection": "Termal Bölgeler",
+            "zone": "Bölge",
+            "current": "Mevcut",
+            "min": "Min",
+            "max": "Maks",
+            "noData": "Termal veri yok",
+            "controlSection": "@tweaks.exynos.title",
+            "performanceMode": "@tweaks.thermalControl.performanceMode",
+            "throttlingProtection": "@tweaks.misc.throttlersProtection",
+            "littleOffset": "Little Ofseti",
+            "bigOffset": "Big Ofseti",
+            "primeOffset": "Prime Ofseti",
+            "g3dOffset": "G3D Ofseti",
+            "thermalMode": "Termal Mod",
+            "customFreq": "Özel Frekans"
         }
     },
     "tweaks": {
@@ -122,7 +141,7 @@
         "loadPresetTitle": "Hazır Ayarı Yükle",
         "loadPresetWarning": "Bu, mevcut ayarlarınızı geçersiz kılacak ve <strong>kaydedecektir</strong>.",
         "loadOnly": "Sadece Yükle",
-        "applyNow": "@features.apply",
+        "applyNow": "Şimdi Uygula",
         "deletePreset": "Ön Ayarı Sil",
         "deletePresetTitle": "@tweaks.deletePreset",
         "deletePresetConfirm": "\"{name}\" ön ayarını silmek istediğinize emin misiniz?",
@@ -136,6 +155,10 @@
         "apply": "@features.apply",
         "saveApply": "Kaydet ve Uygula",
         "unsaved": "Kaydedilmedi",
+        "resetCard": "Varsayılanları geri yükle",
+        "resetTweakTitle": "Varsayılanları Geri Yükle",
+        "resetTweakDesc": "Bu, \"{name}\" için kaydedilmiş yapılandırmayı silecek ve varsayılan değerleri yeniden yükleyecektir.",
+        "resetTweakWarning": "Bu karttaki kaydedilmemiş değişiklikleriniz silinecek.",
         "zram": {
             "title": "@monitor.memory.zramSection",
             "enable": "ZRAM'i Etkinleştir",
@@ -166,6 +189,29 @@
             "vfsCachePressure": "VFS Önbellek Baskısı",
             "watermarkScale": "Filigran Ölçeği"
         },
+        "lmkd": {
+            "title": "Düşük Bellek Katili (LMKD)",
+            "usePsi": "PSI Monitörlerini Kullan",
+            "useMinfreeLevels": "Minfree Seviyelerini Kullan",
+            "low": "Düşük oom_adj",
+            "medium": "Orta oom_adj",
+            "critical": "Kritik oom_adj",
+            "criticalUpgrade": "Kritik Yükseltme",
+            "upgradePressure": "Yükseltme Baskısı",
+            "downgradePressure": "Düşürme Baskısı",
+            "killHeaviestTask": "En Ağır Görevi Sonlandır",
+            "killTimeout": "Sonlandırma Zaman Aşımı",
+            "psiPartialStall": "PSI Kısmi Gecikme",
+            "psiCompleteStall": "PSI Tam Gecikme",
+            "thrashingLimit": "Thrashing Sınırı",
+            "thrashingLimitDecay": "Thrashing Sınırı Düşüşü",
+            "swapUtilMax": "Maksimum Takas Kullanımı",
+            "swapFreeLowPercentage": "Düşük Boş Takas %",
+            "enabled": "@features.optionEnabled",
+            "disabled": "@features.optionDisabled",
+            "requiresLegacyMinfree": "Eski memcg gerektirir (cgroup v1)",
+            "requiresVmpressureFallback": "Devre dışı bırakmak vmpressure geri dönüşü gerektirir (cgroup v1)"
+        },
         "iosched": {
             "ioScheduler": "G/Ç Zamanlayıcı"
         },
@@ -183,10 +229,19 @@
             "desc2": "Özel termal kısıtlama frekansı. Kendi kısıtlama sınırınızı KHz cinsinden ayarlayın.",
             "desc3": "Daha az agresif termal kısıtlama. Frekanslar: 2400 → 2288 → 2208 MHz. Daha sıcak çalışır."
         },
+        "thermalControl": {
+            "title": "Termal Kontrol",
+            "little": "Little",
+            "big": "Big",
+            "prime": "Prime",
+            "g3d": "G3D",
+            "performanceMode": "Performans modu"
+        },
         "undervolt": {
             "title": "Voltaj Düşürme (Undervolt)",
             "little": "Little Kümesi",
             "big": "Big Kümesi",
+            "prime": "Prime Kümesi",
             "gpu": "@monitor.gpu.title",
             "unlockRange": "Tam aralığın kilidini aç",
             "notice": "Kilitsiz Modu etkinleştirdiğiniz veya değiştirdiğiniz için undervolt ayarları temizlendi. Bu, uyumsuz undervolt yapılandırmalarından kaynaklanan çökmeleri önler.",
@@ -194,13 +249,28 @@
             "unlockConfirmTitle": "Tam aralığın kilidi açılsın mı?",
             "unlockConfirmBody": "<p>%15'in ötesindeki değerlerin <strong>pratik bir kullanımı yoktur</strong> ve anında kararsızlığa neden olur.</p><p>Tam aralığın kilidini açmak istediğinizden emin misiniz?</p>"
         },
+        "exynosFc": {
+            "title": "Exynos Frekans Kontrolü",
+            "clampTitle": "CPU Frekans Sınırı",
+            "cpucl0": "@tweaks.undervolt.little",
+            "cpucl1": "@tweaks.undervolt.big",
+            "cpucl2": "@tweaks.undervolt.prime",
+            "disabled": "@features.optionDisabled"
+        },
         "misc": {
             "title": "Çeşitli Floppy1280 Ayarları",
             "blockEd3": "Kulak Algılama Modu 3'ü Engelle",
+            "htpr": "Yüksek Dokunmatik Tarama Hızı",
+            "esgShortBurst": "ESG Patlama Modu",
             "gpuClkLock": "@monitor.gpu.gpuClockLock",
+            "throttlersProtection": "Kısıtlama Koruması",
             "gpuUnlock": "@monitor.gpu.gpuUnlock",
             "enabled": "@features.optionEnabled",
             "disabled": "@features.optionDisabled"
+        },
+        "miscGenericTitle": "Çeşitli Ayarlar",
+        "exynos": {
+            "title": "Exynos Ayarları"
         },
         "miscTrinket": {
             "title": "Çeşitli FloppyTrinket Ayarları",
@@ -259,14 +329,23 @@
         "tooltip": {
             "zram": "Sıkıştırılmış RAM blok cihazı. Verileri RAM'de sıkıştırarak çoklu göreve yardımcı olur. Genellikle daha yüksek boyut, ZRAM'e daha fazla uygulamanın sığması anlamına gelir.",
             "memory": "Linux Sanal Bellek (VM) alt sistemini kontrol etmek için ayarlar. Kernelin performans, pil ömrü ve çoklu görevleri nasıl dengeleyeceğini ayarlar.",
+            "lmkd": "Android'in düşük bellek katili (LMKD) arka plan programı için çalışma zamanı geçersiz kılmaları. Bunlar persist.device_config.lmkd_native.* özellikleriyle eşleşir ve bir lmkd yeniden başlatmasını tetikler.",
             "gpu": "Maksimum GPU frekansını ayarlar. Daha yüksek değerler performansı artırır ancak daha fazla pil tüketir.",
             "display": "HBM, güneş ışığı altında maksimum parlaklığı artırır. CABC, güç tasarrufu yapmak için içeriğe bağlı olarak arka ışığı ayarlar.",
             "ioScheduler": "G/Ç (Giriş/Çıkış) isteklerini sıralamak ve birleştirmek için kullanılan algoritma. Depolama performansını ve gecikmeyi etkiler.",
             "thermal": "Büyük küme CPU kısıtlamasını kontrol eder. Mod 3 agresif performanstır, Mod 1 stok benzeridir, Mod 0 kısıtlamayı devre dışı bırakır (tehlikelidir!).",
+            "thermalControl": "CPU ve G3D termal tetikleme ofsetlerini yakalanan kernel varsayılanlarına göre ayarlayın. Daha yüksek değerler kısıtlamayı gevşetir, daha düşük değerler daha agresif hale getirir. Bu ofsetler, önyükleme tamamlandıktan sonra yakalanır ve uygulanır.",
+            "thermalControlPerformance": "Tüm termal ofset değerlerini 0°C'ye ayarlar, bu da ECT'nin varsayılan kısıtlama değerlerinin kullanıldığı anlamına gelir.",
+            "esgShortBurst": "EMS Energy Step'in kısa süreli iş patlamalarına daha hızlı tepki vermesini sağlar. Performansı yaklaşık 1 ms'de artırır, meşgul eşiğini düşürür ve başlangıçtaki G/Ç sonrası uyanma hızlandırma tabanını yükseltir, böylece patlayıcı işler daha erken CPU performansı elde eder.",
             "undervolt": "Güç tasarrufu yapmak ve ısıyı azaltmak için voltajı düşürür. Hız Aşırtma (Kilitsiz Mod) ile önerilmez.",
+            "exynosFc": "Exynos işlemciler için frekansla ilgili kontroller.",
+            "exynosFcClamp": "Her CPU kümesini seçilen maksimum frekansla sınırlar. Devre dışı bırakılması sınırı kaldırır.",
             "blockEd3": "Sanal yakınlık sensörü devreye girdiğinde ekranın yenileme hızını düşürmesini engelleyen Kulak Algılama Modu 3'ü devre dışı bırakır. Ayrıca yakınlık sensörünü daha az hassas hale getirir.",
+            "htpr": "240Hz dokunmatik örneklemeyi etkinleştirir.",
             "gpuClkLock": "Etkinleştirildiğinde, GPU min/maks frekanslarının değiştirilmesini önler. GPU saatlerini belirli bir aralığa kilitlemek için kullanışlıdır.",
+            "throttlersProtection": "Etkinleştirildiğinde, kullanıcı alanının (ROM'un servisleri ve işlemleri) CPU ve GPU'yu kısıtlaması engellenir, böylece yalnızca kernel düzeyinde kısıtlama gerçekleşir.",
             "gpuUnlock": "GPU hız aşırtmayı anında etkinleştirir. Yalnızca Superfloppy hız aşırtma modlarında (1, 2, 3) çalışır. Kilitsiz Mod devre dışıysa veya OC olmayan modlardaysa gri renkte görünür.",
+            "gpuUnlock2100": "GPU hız aşırtmayı anında etkinleştirir. Floppy2100'de bu, GPU'yu 949 MHz'e hız aşırtır ve anında etkiyle herhangi bir zamanda açılıp kapatılabilir.",
             "soundcontrol": "Kulaklık ve mikrofon kazancını desibel cinsinden ayarlayın. Daha yüksek değerler sesi artırır. Sol ve sağ kanalları bağımsız kontrol etmek için Sol/Sağ Ayır'ı kullanın.",
             "charging": "Gelişmiş şarj davranışını yapılandırın.",
             "chargingBypass": "Cihazın USB gücüyle çalışmasına izin verirken pil şarjını durdurur. Isıyı azaltmak için oyun oynarken kullanışlıdır.",
@@ -282,7 +361,9 @@
         "description": "FloppyKernel'i yapılandırmak için yardımcı modül.",
         "moduleLinks": "Modül bağlantıları",
         "projectCredits": "PROJE EKİBİ",
+        "thirdPartyCredits": "Üçüncü taraf kredileri",
         "roleFlopster": "Modül ve FloppyKernel geliştiricisi",
+        "roleBeerCss": "MD3 arayüz çerçevesi",
         "kernelLinksTemplate": "{name} bağlantıları",
         "translationCredits": "ÇEVİRİ EKİBİ",
         "repository": "Depo",
@@ -309,6 +390,7 @@
         "presetLoadFailed": "Hazır ayar yüklenemedi",
         "presetDefaultApplied": "Varsayılan ayar uygulandı",
         "presetDefaultLoaded": "Varsayılan ayar yüklendi",
+        "tweakDefaultLoaded": "{name} için varsayılanlar yüklendi",
         "presetSavedApplied": "Hazır ayar kaydedildi ve uygulandı",
         "presetLoadedSaved": "Hazır ayar yüklendi ve kaydedildi",
         "presetExportBuiltIn": "Dahili hazır ayarlar dışa aktarılamaz",
@@ -332,6 +414,12 @@
         "readonlyBody": "<p>Bu, salt okunur olarak işaretlenen özelliklerin yamanmasına izin verir.</p><p><strong>Sadece test amaçlı kullanın. Değişiklikler KAYDEDİLMEYECEKTİR.</strong></p>",
         "applyChangesTitle": "Değişiklikler uygulansın mı?",
         "applyChangesBody": "<p>Bu işlem, özellik yamalı kerneli cihazınıza flaşlayacaktır.</p><p><strong>Bu işlem riskler içerir.</strong></p>",
+        "thermalControlPerformanceTitle": "Performans modu etkinleştirilsin mi?",
+        "thermalControlPerformanceBody": "<p>Bu, ECT'nin varsayılan kısıtlama değerlerini kullanarak tüm termal ofsetleri <strong>0°C</strong>'ye ayarlar.</p><p><strong>Bu, önemli aşırı ısınmaya neden olabilir.</strong></p>",
+        "throttlersProtectionOffsetsEnableTitle": "Önerilen termal ofsetler ayarlansın mı?",
+        "throttlersProtectionOffsetsEnableBody": "<p>Kısıtlama Koruması etkinleştirildi. ROM artık SoC'yi kısıtlayamayacağı için önerilen ofsetler aşırı ısınmayı önlemeye yardımcı olur.</p><p>Bu; Big ve Prime'ı <strong>-10°C</strong>'ye, Little'ı <strong>-8°C</strong>'ye ve G3D'yi <strong>-13°C</strong>'ye ayarlayacaktır.</p>",
+        "throttlersProtectionOffsetsDisableTitle": "Termal ofsetler 0°C'ye sıfırlansın mı?",
+        "throttlersProtectionOffsetsDisableBody": "<p>Kısıtlama Koruması devre dışı bırakıldı. ROM kısıtlamayı tekrar yöneteceğinden tüm termal ofsetleri <strong>0°C</strong>'ye sıfırlamanız önerilir.</p>",
         "rebootPendingBody": "<p>{action} işlemini yapmak istediğinizden emin misiniz?</p><p><strong>Uygulanmamış değişiklikleriniz kaybolacak!</strong></p>",
         "processingKernel": "Kernel İşleniyor..."
     }
