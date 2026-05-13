@@ -50,6 +50,11 @@
             "code": "az",
             "name": "Azərbaycanca",
             "dir": "ltr"
+        },
+        {
+            "code": "sq",
+            "name": "Shqip",
+            "dir": "ltr"
         }
     ]
 }

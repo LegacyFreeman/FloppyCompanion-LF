@@ -56,6 +56,10 @@
                 {
                     "name": "MematiBas42",
                     "url": "https://github.com/MematiBas42"
+                },
+                {
+                    "name": "iWishkem",
+                    "url": "https://github.com/iwishkem"
                 }
             ]
         },
@@ -96,6 +100,14 @@
                 {
                     "name": "The Primal Pea",
                     "url": "https://github.com/ThePrimalPea"
+                }
+            ]
+        },
+        "sq": {
+            "contributors": [
+                {
+                    "name": "3q5i",
+                    "url": "https://github.com/3q5i"
                 }
             ]
         }
