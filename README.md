@@ -100,6 +100,7 @@ FloppyCompanion currently supports:
 - Russian
 - Arabic
 - Azerbaijani
+- Albanian (Standard Dialect)
 
 Translation guide: docs/TRANSLATION_GUIDE.md
 
