@@ -737,6 +737,17 @@
             return state.config.uname;
         }
 
+        if (cmd.includes('sec_detect/device_name') &&
+            cmd.includes('sec_detect/device_model') &&
+            cmd.includes('uname -r') &&
+            cmd.includes('printf "name=%s\\nmodel=%s\\nuname=%s\\n"')) {
+            return [
+                `name=${state.config.deviceCode}`,
+                `model=${state.config.deviceModel}`,
+                `uname=${state.config.uname}`
+            ].join('\n');
+        }
+
         if (cmd.includes('fkfeatctl get init_protection')) {
             return String(state.liveFeatures.init_protection ?? state.features.init_protection ?? '1');
         }
