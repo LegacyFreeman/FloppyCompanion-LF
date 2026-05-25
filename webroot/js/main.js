@@ -172,12 +172,16 @@ async function init() {
     const themeMenu = document.getElementById('theme-menu');
     const systemDarkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
     const themeModes = [
-        { mode: 'auto', label: 'Auto', icon: 'theme_auto' },
-        { mode: 'light', label: 'Light', icon: 'theme_light' },
-        { mode: 'dark', label: 'Dark', icon: 'theme_dark' },
-        { mode: 'monet', label: 'Dynamic colors', icon: 'palette' }
+        { mode: 'auto', labelKey: 'theme.auto', icon: 'theme_auto' },
+        { mode: 'light', labelKey: 'theme.light', icon: 'theme_light' },
+        { mode: 'dark', labelKey: 'theme.dark', icon: 'theme_dark' },
+        { mode: 'monet', labelKey: 'theme.monet', icon: 'palette' }
     ];
     const monetPromptChoiceFile = '/data/adb/floppy_companion/config/.theme_choice_prompted';
+
+    function tr(key) {
+        return window.t ? window.t(key) : key;
+    }
 
     async function initMonet() {
         if (window.isMonetInitialized) return;
@@ -289,7 +293,7 @@ async function init() {
 
             item.innerHTML = `
                 <svg class="theme-menu-icon" viewBox="0 0 24 24" aria-hidden="true"></svg>
-                <span>${theme.label}</span>
+                <span>${tr(theme.labelKey)}</span>
             `;
 
             applyIconToSvg(item.querySelector('svg'), theme.icon);
@@ -299,6 +303,7 @@ async function init() {
 
     if (themeBtn && themeMenu) {
         populateThemeMenu();
+        document.addEventListener('languageChanged', populateThemeMenu);
         setupDropdown('theme-toggle', 'theme-menu');
 
         themeMenu.addEventListener('click', (e) => {
@@ -332,11 +337,11 @@ PRESET_EOF`);
         if (alreadyAsked && alreadyAsked.trim() === 'ok') return;
 
         const useMonet = await showConfirmModal({
-            title: 'Use dynamic colors?',
-            body: '<p>Dynamic colors use your system palette for this WebUI. You can keep the default device-family colors instead.</p>',
+            title: tr('theme.promptTitle'),
+            body: `<p>${tr('theme.promptBody')}</p>`,
             iconName: 'palette',
-            confirmText: 'Dynamic colors',
-            cancelText: 'Default colors'
+            confirmText: tr('theme.monet'),
+            cancelText: tr('theme.defaultColors')
         });
 
         if (useMonet) {

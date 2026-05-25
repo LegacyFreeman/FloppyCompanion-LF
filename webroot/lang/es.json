@@ -29,6 +29,16 @@
         "rebootDownload": "Reiniciar a Download",
         "rebootBootloader": "Reiniciar a Bootloader"
     },
+    "theme": {
+        "label": "Tema",
+        "auto": "Automático",
+        "light": "Claro",
+        "dark": "Oscuro",
+        "monet": "Colores dinámicos",
+        "defaultColors": "Colores predeterminados",
+        "promptTitle": "¿Usar colores dinámicos?",
+        "promptBody": "Los colores dinámicos usan la paleta de tu sistema para esta WebUI. También puedes mantener los colores predeterminados según la familia del dispositivo."
+    },
     "features": {
         "title": "Características",
         "kernelFeatures": "Características del Kernel",
