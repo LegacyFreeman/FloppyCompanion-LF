@@ -1190,7 +1190,7 @@ function renderThirdPartyCredits(container, data) {
         if (entry.license) meta.push(entry.license);
 
         html += '<li class="credits-list-item-block">';
-        html += `<div>${heading}</div>`;
+        html += `<div class="credits-heading-line">${heading}</div>`;
         if (meta.length > 0) {
             html += `<div class="credits-meta">${meta.join(' · ')}</div>`;
         }

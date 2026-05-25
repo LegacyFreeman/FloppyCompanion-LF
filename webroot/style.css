@@ -3774,6 +3774,14 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     gap: 4px;
 }
 
+.credits-heading-line {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: 5px;
+    row-gap: 2px;
+}
+
 .credits-link {
     color: var(--md-sys-color-on-surface);
     text-decoration: none;
