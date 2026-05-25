@@ -381,6 +381,7 @@ body,
 .card,
 .feature-card,
 .tweak-card,
+.top-app-bar,
 .hero-chip,
 .bottom-nav,
 .nav-item,
@@ -808,11 +809,10 @@ body {
 .top-app-bar {
     position: fixed;
     top: 0;
-    top: 0;
     inset-inline-start: 0;
     inset-inline-end: 0;
     height: 64px;
-    background-color: color-mix(in srgb, var(--md-sys-color-surface) 84%, var(--md-sys-color-surface-container-low) 16%);
+    background-color: var(--md-sys-color-surface-container-low);
     display: flex;
     align-items: center;
     padding: 0 16px;
@@ -820,12 +820,13 @@ body {
     /* M3 standard spacing */
     z-index: 100;
     pointer-events: auto;
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--md-sys-color-outline-variant) 28%, transparent);
 }
 
 .top-app-bar .title {
     font-size: 22px;
-    font-weight: 400;
-    /* Regular per M3 */
+    font-weight: 500;
+    letter-spacing: 0;
     color: var(--md-sys-color-on-surface);
     pointer-events: none;
 }
@@ -2316,8 +2317,8 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 60%, transparent);
-    color: var(--md-sys-color-on-primary-container);
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
     padding: 6px 16px;
     border-radius: 100px;
     font-size: 14px;
@@ -3885,6 +3886,11 @@ html.theme-monet {
 html.theme-monet a,
 html.theme-monet .accent-text {
     color: var(--mo-primary) !important;
+}
+
+html.theme-monet .top-app-bar {
+    background-color: var(--mo-surfaceContainer) !important;
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--mo-outlineVariant) 34%, transparent);
 }
 
 /* Logo colors */
