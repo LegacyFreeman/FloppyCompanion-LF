@@ -169,7 +169,14 @@ async function init() {
     // --- Theme Logic ---
     let currentThemeMode = localStorage.getItem('theme_mode') || 'auto';
     const themeBtn = document.getElementById('theme-toggle');
+    const themeMenu = document.getElementById('theme-menu');
     const systemDarkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const themeModes = [
+        { mode: 'auto', label: 'Auto', icon: 'theme_auto' },
+        { mode: 'light', label: 'Light', icon: 'theme_light' },
+        { mode: 'dark', label: 'Dark', icon: 'theme_dark' },
+        { mode: 'monet', label: 'Dynamic colors', icon: 'palette' }
+    ];
 
     async function initMonet() {
         if (window.isMonetInitialized) return;
@@ -196,6 +203,12 @@ async function init() {
     }
 
     function applyTheme(mode) {
+        if (mode === 'monet' && window.isMonetSupported === false) {
+            mode = 'auto';
+            currentThemeMode = mode;
+            localStorage.setItem('theme_mode', mode);
+        }
+
         document.body.classList.remove('theme-light', 'theme-dark', 'theme-monet', 'light', 'dark');
         document.documentElement.classList.remove('theme-monet');
 
@@ -231,17 +244,15 @@ async function init() {
         }
 
         updateThemeIcon(mode);
+        populateThemeMenu();
     }
 
-    function updateThemeIcon(mode) {
-        if (!themeBtn) return;
-        let iconName = 'theme_auto';
-        if (mode === 'light') iconName = 'theme_light';
-        else if (mode === 'dark') iconName = 'theme_dark';
-        else if (mode === 'monet') iconName = 'palette';
+    function getThemeIconName(mode) {
+        const theme = themeModes.find(item => item.mode === mode);
+        return theme ? theme.icon : 'theme_auto';
+    }
 
-        const svg = themeBtn.querySelector('svg');
-
+    function applyIconToSvg(svg, iconName) {
         if (svg && window.FC && window.FC.icons && window.FC.icons.applyToSvg) {
             window.FC.icons.applyToSvg(svg, iconName, { fill: 'currentColor' });
             return;
@@ -250,27 +261,59 @@ async function init() {
         // Fallback: keep the existing markup and only update the first path.
         const def = window.FC && window.FC.icons && window.FC.icons.get ? window.FC.icons.get(iconName) : null;
         const d = def && def.paths && def.paths[0] ? (typeof def.paths[0] === 'string' ? def.paths[0] : def.paths[0].d) : '';
-        const pathEl = themeBtn.querySelector('path');
+        const pathEl = svg ? svg.querySelector('path') : null;
         if (pathEl && d) pathEl.setAttribute('d', d);
     }
 
-    if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-            if (currentThemeMode === 'auto') currentThemeMode = 'light';
-            else if (currentThemeMode === 'light') currentThemeMode = 'dark';
-            else if (currentThemeMode === 'dark') {
-                // Skip monet if not supported
-                currentThemeMode = window.isMonetSupported ? 'monet' : 'auto';
-            } else currentThemeMode = 'auto';
+    function updateThemeIcon(mode) {
+        if (!themeBtn) return;
+        applyIconToSvg(themeBtn.querySelector('svg'), getThemeIconName(mode));
+    }
 
+    function populateThemeMenu() {
+        if (!themeMenu) return;
+
+        themeMenu.innerHTML = '';
+        themeModes.forEach(theme => {
+            const isCurrent = currentThemeMode === theme.mode;
+            const isUnavailable = theme.mode === 'monet' && window.isMonetSupported === false;
+            const item = document.createElement('li');
+            item.className = 'dropdown-item theme-dropdown-item';
+            if (isCurrent) item.classList.add('fc-selected');
+            if (isUnavailable) item.classList.add('fc-disabled');
+            item.dataset.theme = theme.mode;
+            item.setAttribute('role', 'menuitemradio');
+            item.setAttribute('aria-checked', String(isCurrent));
+            item.setAttribute('aria-disabled', String(isUnavailable));
+
+            item.innerHTML = `
+                <svg class="theme-menu-icon" viewBox="0 0 24 24" aria-hidden="true"></svg>
+                <span>${theme.label}</span>
+            `;
+
+            applyIconToSvg(item.querySelector('svg'), theme.icon);
+            themeMenu.appendChild(item);
+        });
+    }
+
+    if (themeBtn && themeMenu) {
+        populateThemeMenu();
+        setupDropdown('theme-toggle', 'theme-menu');
+
+        themeMenu.addEventListener('click', (e) => {
+            const item = e.target.closest('.dropdown-item');
+            if (!item || item.classList.contains('fc-disabled')) return;
+
+            const mode = item.dataset.theme;
+            if (!mode || mode === currentThemeMode) {
+                themeMenu.classList.remove('fc-active');
+                return;
+            }
+
+            currentThemeMode = mode;
             localStorage.setItem('theme_mode', currentThemeMode);
-
-            // Fade out icon
-            themeBtn.style.opacity = '0.5';
-            setTimeout(() => {
-                applyTheme(currentThemeMode);
-                themeBtn.style.opacity = '1';
-            }, 150);
+            applyTheme(currentThemeMode);
+            themeMenu.classList.remove('fc-active');
         });
     }
 
@@ -452,6 +495,7 @@ async function init() {
 
     // Initialize Monet theme
     await initMonet();
+    applyTheme(currentThemeMode);
 
     const props = await getModuleProps();
     const devInfo = await resolveDeviceInfo();

@@ -933,6 +933,24 @@ body {
     color: var(--md-sys-color-on-secondary-container);
 }
 
+.dropdown-item.fc-disabled {
+    opacity: 0.42;
+    cursor: default;
+    pointer-events: none;
+}
+
+.theme-dropdown-item {
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.theme-menu-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
 .lang-code-btn-label {
     margin-inline-start: 6px;
     font-weight: bold;

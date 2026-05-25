@@ -51,15 +51,19 @@ function updateSlide(index) {
     currentIndex = nextIndex;
 
     // --- Theme Toggle Visibility ---
-    const themeBtn = document.getElementById('theme-toggle');
-    if (themeBtn) {
+    const themeContainer = document.getElementById('theme-dropdown-container');
+    const themeMenu = document.getElementById('theme-menu');
+    if (themeContainer) {
         // 'About' tab is index 4
         if (index === 4) {
-            themeBtn.style.opacity = '1';
-            themeBtn.style.pointerEvents = 'auto';
+            themeContainer.style.opacity = '1';
+            themeContainer.style.pointerEvents = 'auto';
         } else {
-            themeBtn.style.opacity = '0';
-            themeBtn.style.pointerEvents = 'none';
+            themeContainer.style.opacity = '0';
+            themeContainer.style.pointerEvents = 'none';
+            if (themeMenu) {
+                themeMenu.classList.remove('fc-active');
+            }
         }
     }
 

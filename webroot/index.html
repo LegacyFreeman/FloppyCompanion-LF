@@ -63,11 +63,17 @@
                     </li>
                 </div>
             </div>
-            <!-- Theme Toggle (About Tab Only) -->
-            <button id="theme-toggle" class="icon-button transparent circle" style="opacity: 0; transition: opacity 0.3s;">
-                <!-- Icon will be set by JS -->
-                <svg class="icon-svg" viewBox="0 0 24 24" data-icon="theme_auto"></svg>
-            </button>
+            <!-- Theme Selector (About Tab Only) -->
+            <div id="theme-dropdown-container" class="dropdown-container"
+                style="opacity: 0; transition: opacity 0.3s;">
+                <button id="theme-toggle" class="icon-button transparent circle" aria-label="Theme">
+                    <!-- Icon will be set by JS -->
+                    <svg class="icon-svg" viewBox="0 0 24 24" data-icon="theme_auto"></svg>
+                </button>
+                <div id="theme-menu" class="dropdown-menu no-wrap" role="menu" aria-label="Theme">
+                    <!-- Theme items will be populated dynamically by JS -->
+                </div>
+            </div>
         </div>
     </nav>
 
