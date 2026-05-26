@@ -580,6 +580,7 @@ body:not(.theme-monet) beer-css {
     line-height: 0;
     vertical-align: middle;
     margin-inline-start: 0;
+    z-index: 2000;
 }
 
 .status-icon-wrapper.beer {
@@ -679,7 +680,7 @@ body:not(.theme-monet) beer-css {
     box-shadow:
         0 1px 2px rgba(0, 0, 0, 0.18),
         0 6px 14px rgba(0, 0, 0, 0.22);
-    z-index: 120;
+    z-index: 2100;
     pointer-events: none;
     text-align: start;
     white-space: normal;
