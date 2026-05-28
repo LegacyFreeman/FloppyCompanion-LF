@@ -140,12 +140,6 @@ function updateExynosFcPendingIndicator() {
 }
 
 async function loadExynosFcState() {
-    if (window.KERNEL_NAME !== 'Floppy2100' && window.KERNEL_NAME !== 'Floppy1280') {
-        exynosFcAvailable = false;
-        renderExynosFcCard();
-        return;
-    }
-
     const [availabilityOutput, allOutput, savedOutput] = await Promise.all([
         runExynosFcBackend('is_available'),
         runExynosFcBackend('get_all'),
@@ -207,12 +201,6 @@ async function applyExynosFc() {
 }
 
 function initExynosFcTweak() {
-    if (window.KERNEL_NAME !== 'Floppy2100' && window.KERNEL_NAME !== 'Floppy1280') {
-        exynosFcAvailable = false;
-        renderExynosFcCard();
-        return;
-    }
-
     if (typeof window.registerTweak === 'function') {
         window.registerTweak('exynos_fc', {
             getState: () => buildExynosFcEffectiveState(),
