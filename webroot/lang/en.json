@@ -182,6 +182,13 @@
         "resetTweakTitle": "Restore Defaults",
         "resetTweakDesc": "This will delete the saved configuration for \"{name}\" and reload its captured defaults.",
         "resetTweakWarning": "Your unsaved changes on this card will be replaced.",
+        "hwui": {
+            "title": "HWUI Renderer",
+            "renderer": "Renderer",
+            "default": "@features.optionDefault",
+            "activeRenderer": "Active renderer",
+            "romDefault": "ROM default"
+        },
         "zram": {
             "title": "@monitor.memory.zramSection",
             "enable": "Enable ZRAM",
@@ -351,6 +358,7 @@
         "platformTweaks": "Platform Tweaks",
         "dismiss": "Dismiss",
         "tooltip": {
+            "hwui": "Selects Android's Skia HWUI renderer. Default leaves the ROM's renderer choice in control.",
             "zram": "Compressed RAM block device. Helps multitasking by compressing data in RAM. Usually, higher size translates to more apps fitting in ZRAM.",
             "memory": "Settings to control the Linux Virtual Memory (VM) subsystem. Adjusts how the kernel balances performance, battery life, and multitasking.",
             "lmkd": "Runtime overrides for Android's low memory killer daemon. These map to persist.device_config.lmkd_native.* properties and trigger an lmkd reinit.",

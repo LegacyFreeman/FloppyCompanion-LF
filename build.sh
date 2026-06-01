@@ -162,6 +162,7 @@ trap "rm -rf $TEMP_DIR" EXIT
 cp module.prop "$TEMP_DIR/"
 cp LICENSE "$TEMP_DIR/"
 cp service.sh "$TEMP_DIR/"
+cp post-fs-data.sh "$TEMP_DIR/"
 cp uninstall.sh "$TEMP_DIR/"
 cp persistence.sh "$TEMP_DIR/"
 cp customize.sh "$TEMP_DIR/"

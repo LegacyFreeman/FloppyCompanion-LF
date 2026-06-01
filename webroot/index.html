@@ -1258,6 +1258,38 @@
                         </div>
                     </template>
 
+                    <template id="tpl-hwui">
+                        <div class="card-content">
+                            <div class="tweak-section" style="padding-top: 0;">
+                                <h3 class="tweak-section-title" data-i18n="tweaks.hwui.renderer">Renderer</h3>
+                                <div id="hwui-renderer-options" class="option-buttons beer">
+                                    <button class="option-btn chip medium" data-renderer="default"
+                                        data-i18n="tweaks.hwui.default">Default</button>
+                                    <button class="option-btn chip medium" data-renderer="skiavk">Vulkan</button>
+                                    <button class="option-btn chip medium" data-renderer="skiagl">OpenGL</button>
+                                </div>
+                                <div class="current-values">
+                                    <div class="value-row">
+                                        <span class="value-label" data-i18n="tweaks.hwui.activeRenderer">Active renderer</span>
+                                        <span class="value-data" id="hwui-current-renderer">--</span>
+                                    </div>
+                                    <div class="value-row">
+                                        <span class="value-label" data-i18n="tweaks.hwui.romDefault">ROM default</span>
+                                        <span class="value-data" id="hwui-rom-default">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tweak-actions beer">
+                                <button class="tweak-action-btn fill action-secondary" id="hwui-btn-save"
+                                    data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn fill action-secondary" id="hwui-btn-apply"
+                                    data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn action-primary" id="hwui-btn-save-apply"
+                                    data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
                     <template id="tpl-zram">
                         <div class="card-content">
                             <div class="tweak-toggle-row">
@@ -2114,6 +2146,7 @@
     <!-- Core tweaks functionality -->
     <script src="js/tweaks.js"></script>
     <!-- Shared tweaks (platform-agnostic) -->
+    <script src="js/tweaks/shared/hwui.js"></script>
     <script src="js/tweaks/shared/zram.js"></script>
     <script src="js/tweaks/shared/memory.js"></script>
     <script src="js/tweaks/shared/lmkd.js"></script>

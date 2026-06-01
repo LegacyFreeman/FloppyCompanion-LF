@@ -185,6 +185,17 @@
       "requires": null,
       "tweaks": [
         {
+          "id": "hwui",
+          "cardId": "hwui-card",
+          "pendingId": "hwui-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-hwui",
+          "iconKey": "shadow",
+          "titleKey": "tweaks.hwui.title",
+          "tooltipKey": "tweaks.tooltip.hwui",
+          "requires": null
+        },
+        {
           "id": "zram",
           "cardId": "zram-card",
           "pendingId": "zram-pending-indicator",

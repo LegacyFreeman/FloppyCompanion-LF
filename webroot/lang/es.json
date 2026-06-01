@@ -182,6 +182,13 @@
         "resetTweakTitle": "Restaurar Predeterminados",
         "resetTweakDesc": "Esto eliminará la configuración guardada de \"{name}\" y recargará sus valores capturados.",
         "resetTweakWarning": "Tus cambios sin guardar en esta tarjeta serán reemplazados.",
+        "hwui": {
+            "title": "Renderizador HWUI",
+            "renderer": "Renderizador",
+            "default": "Predeterminado",
+            "activeRenderer": "Renderizador activo",
+            "romDefault": "Predeterminado de la ROM"
+        },
         "zram": {
             "title": "ZRAM",
             "enable": "Activar ZRAM",
@@ -351,6 +358,7 @@
         "platformTweaks": "Ajustes de Plataforma",
         "dismiss": "Descartar",
         "tooltip": {
+            "hwui": "Selecciona el renderizador Skia HWUI de Android. Predeterminado deja que la ROM controle el renderizador.",
             "zram": "Dispositivo de bloque de RAM comprimida. Ayuda a la multitarea comprimiendo datos en la RAM. Generalmente, un mayor tamaño significa que caben más apps en ZRAM.",
             "memory": "Ajustes para controlar el subsistema de Memoria Virtual (VM) de Linux. Ajusta cómo el kernel equilibra rendimiento, batería y multitarea.",
             "lmkd": "Overrides en tiempo de ejecución para el daemon low memory killer de Android. Se mapean a propiedades persist.device_config.lmkd_native.* y fuerzan una reinicialización de lmkd.",

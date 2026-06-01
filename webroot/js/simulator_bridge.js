@@ -141,6 +141,10 @@
             persistedFeatures: {},
             files: {},
             tweakCurrent: {
+                hwui: {
+                    renderer: 'default',
+                    rom_default: 'Vulkan'
+                },
                 zram: {
                     enabled: '1',
                     disksize: '3221225472',
@@ -236,6 +240,7 @@
                 }
             },
             tweakSaved: {
+                hwui: {},
                 zram: {},
                 memory: {},
                 lmkd: {},

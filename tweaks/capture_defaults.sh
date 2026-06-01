@@ -63,6 +63,12 @@ apply_predefined_tweak_defaults() {
 
 [ -f "$DEFAULT_OVERRIDES_FILE" ] && . "$DEFAULT_OVERRIDES_FILE"
 
+# --- HWUI Renderer Defaults ---
+HWUI_ROM_DEFAULT="Unknown"
+if [ -f "$MODDIR/tweaks/hwui.sh" ]; then
+    HWUI_ROM_DEFAULT=$(sh "$MODDIR/tweaks/hwui.sh" rom_default 2>/dev/null || echo "Unknown")
+fi
+
 # --- ZRAM Defaults ---
 ZRAM_DEV=""
 if [ -e /dev/block/zram0 ]; then
@@ -104,6 +110,10 @@ cat > "$TMP_OUTPUT_FILE" << EOF
   "builtIn": true,
   "capturedAt": "$(date -Iseconds)",
   "tweaks": {
+    "hwui": {
+      "renderer": "default",
+      "rom_default": "$HWUI_ROM_DEFAULT"
+    },
     "zram": {
       "enabled": "$ZRAM_ENABLED",
       "disksize": "$ZRAM_DISKSIZE",

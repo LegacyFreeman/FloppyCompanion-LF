@@ -176,6 +176,7 @@ async function showResetTweakModal(tweakName) {
 
 window.reloadTweakState = async function (tweakId) {
     const loaders = {
+        hwui: window.loadHwuiState,
         zram: window.loadZramState,
         memory: window.loadMemoryState,
         lmkd: window.loadLmkdState,
@@ -215,6 +216,7 @@ window.clearTweakPersistence = async function (tweakId) {
     }
 
     const configFiles = {
+        hwui: 'hwui.conf',
         zram: 'zram.conf',
         memory: 'memory.conf',
         lmkd: 'lmkd.conf',
@@ -817,6 +819,7 @@ async function initTweaksTab() {
         await window.initPresets();
     }
 
+    if (typeof initHwuiTweak === 'function') initHwuiTweak();
     if (typeof initZramTweak === 'function') initZramTweak();
     if (typeof initMemoryTweak === 'function') initMemoryTweak();
     if (typeof initLmkdTweak === 'function') initLmkdTweak();
