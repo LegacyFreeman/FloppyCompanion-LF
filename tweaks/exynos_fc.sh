@@ -153,14 +153,22 @@ save() {
 }
 
 apply() {
+    failed=0
     for arg in "$@"; do
         key="${arg%%=*}"
         val="${arg#*=}"
         is_valid_key "$key" || continue
         node=$(node_for_key "$key")
         [ -f "$node" ] || continue
-        echo "$(sanitize_freq "$val")" > "$node" 2>/dev/null
+        if ! echo "$(sanitize_freq "$val")" > "$node" 2>/dev/null; then
+            echo "error: failed to write $key" >&2
+            failed=1
+        fi
     done
+    if [ "$failed" != "0" ]; then
+        echo "error: failed"
+        return 1
+    fi
     echo "applied"
 }
 

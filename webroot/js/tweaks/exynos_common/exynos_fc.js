@@ -180,7 +180,12 @@ window.loadExynosFcState = loadExynosFcState;
 async function saveExynosFc() {
     const effectiveState = buildExynosFcEffectiveState();
     const sparseState = window.buildSparseStateAgainstDefaults(effectiveState, exynosFcDefaultState);
-    await runExynosFcBackend('save', ...Object.entries(sparseState).map(([key, value]) => `${key}=${value}`));
+    const saveOutput = await runExynosFcBackend('save', ...Object.entries(sparseState).map(([key, value]) => `${key}=${value}`));
+    if (!saveOutput || String(saveOutput).startsWith('error')) {
+        showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply settings', true);
+        return;
+    }
+
     exynosFcSavedState = { ...sparseState };
     exynosFcReferenceState = normalizeExynosFcState(
         window.initPendingState(exynosFcCurrentState, exynosFcSavedState, exynosFcDefaultState)
@@ -192,7 +197,11 @@ async function saveExynosFc() {
 
 async function applyExynosFc() {
     const effectiveState = buildExynosFcEffectiveState();
-    await runExynosFcBackend('apply', ...Object.entries(effectiveState).map(([key, value]) => `${key}=${value}`));
+    const applyOutput = await runExynosFcBackend('apply', ...Object.entries(effectiveState).map(([key, value]) => `${key}=${value}`));
+    if (!applyOutput || String(applyOutput).startsWith('error')) {
+        showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply settings', true);
+        return;
+    }
 
     const allOutput = await runExynosFcBackend('get_all');
     exynosFcClusters = parseExynosFcOutput(allOutput);
@@ -201,6 +210,13 @@ async function applyExynosFc() {
         currentState[cluster.key] = cluster.current;
     });
     exynosFcCurrentState = normalizeExynosFcState({ ...EXYNOS_FC_BASE_STATE, ...currentState });
+    const failedKeys = Object.keys(effectiveState)
+        .filter((key) => exynosFcCurrentState[key] !== effectiveState[key]);
+    if (failedKeys.length > 0) {
+        renderExynosFcCard();
+        showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply settings', true);
+        return;
+    }
 
     renderExynosFcCard();
     showToast(window.t ? window.t('toast.settingsApplied') : 'Settings applied');
