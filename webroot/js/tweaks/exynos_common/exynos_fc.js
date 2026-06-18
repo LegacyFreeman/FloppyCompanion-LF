@@ -84,7 +84,9 @@ function ensureExynosFcOption(key, select, value) {
 function renderExynosFcCard() {
     const supportedKeys = getSupportedExynosFcKeys();
     const card = document.getElementById('exynos-fc-card');
+    const presetSection = document.getElementById('exynos-fc-preset-section');
     if (card) card.classList.toggle('hidden', !exynosFcAvailable || supportedKeys.length === 0);
+    if (presetSection) presetSection.classList.toggle('hidden', !supportedKeys.includes('power_mode'));
 
     EXYNOS_FC_KEYS.forEach((key) => {
         const row = document.getElementById(`exynos-fc-row-${key}`);
