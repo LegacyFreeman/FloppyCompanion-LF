@@ -86,7 +86,10 @@ function renderExynosFcCard() {
     const card = document.getElementById('exynos-fc-card');
     const presetSection = document.getElementById('exynos-fc-preset-section');
     if (card) card.classList.toggle('hidden', !exynosFcAvailable || supportedKeys.length === 0);
-    if (presetSection) presetSection.classList.toggle('hidden', !supportedKeys.includes('power_mode'));
+
+    const hasPresets = supportedKeys.includes('power_mode') &&
+        exynosFcClusters.find((cluster) => cluster.key === 'power_mode')?.available.some((freq) => freq !== '0');
+    if (presetSection) presetSection.classList.toggle('hidden', !hasPresets);
 
     EXYNOS_FC_KEYS.forEach((key) => {
         const row = document.getElementById(`exynos-fc-row-${key}`);
